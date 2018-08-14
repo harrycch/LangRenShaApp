@@ -24,7 +24,7 @@ export class MyApp {
     this.pages = [
       { title: '玩狼人杀', component: HomePage },
       { title: '角色列表', component: ListPage },
-      { title: '游戏', component: GamePage}
+      // { title: '游戏', component: GamePage}
     ];
 
   }
