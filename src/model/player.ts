@@ -1,13 +1,17 @@
 import { Card } from './card';
 
 export class Player {
-	private isAlive : boolean = true;
-	private card : Card;
+	public isAlive : boolean = true;
+	public card : Card;
 
-	private isBeingKilled : boolean = false;
-	private isBeingPoisoned : boolean = false;
+	public isBeingKilled : boolean = false;
+	public isBeingPoisoned : boolean = false;
 
-  constructor(private id : number) {
+  constructor(public id : number) {
+  }
 
+  setNewCard(card : Card) : Player{
+  	this.card = card;
+  	return this;
   }
 }
