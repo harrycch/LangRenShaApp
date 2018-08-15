@@ -22,11 +22,11 @@
 <ion-content padding>
   <ion-grid>
   <ion-row class="card-background-page">
-    <ion-col col-3 *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12]">
+    <ion-col col-3 *ngFor="let player of game.playerList">
       <ion-card>
-        <img class="card-image" src="assets/imgs/card-villager.jpg"/>
-        <div class="card-title">{{i}}</div>
-        <div class="card-subtitle">(生存)</div>
+        <img class="card-image" src="assets/imgs/{{player.card.imgPath}}"/>
+        <div class="card-title">{{player.id}}</div>
+        <div class="card-subtitle">({{player.isAlive ? '生存' : '死亡'}})</div>
       </ion-card>
     </ion-col>
   </ion-row>

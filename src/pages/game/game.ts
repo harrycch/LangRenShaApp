@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, AlertController } from 'ionic-angular';
+import { Game } from '../../model/game';
 
 /**
  * Generated class for the GamePage page.
@@ -14,8 +15,13 @@ import { NavController, NavParams, AlertController } from 'ionic-angular';
 })
 export class GamePage {
   private showAlertMessage = true;
+  public game : Game;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private alertCtrl: AlertController) {
+    this.game = Game.getInstance({
+      randomCards : true
+    });
+    this.game.start();
   }
 
   ionViewDidLoad() {

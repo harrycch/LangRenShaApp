@@ -5,6 +5,7 @@ export class Player {
 	public card : Card;
 
 	public isBeingKilled : boolean = false;
+  public isBeingPotioned : boolean = false;
 	public isBeingPoisoned : boolean = false;
 
   constructor(public id : number) {
