@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar hideBackButton="true">
-    <ion-title>天黑请闭眼</ion-title>
+    <ion-title>{{ "page_game_title" | translate }}</ion-title>
 
     <ion-buttons right>
       <button ion-button navPop icon-only>
@@ -25,8 +25,8 @@
     <ion-col col-3 *ngFor="let player of game.playerList">
       <ion-card>
         <img class="card-image" src="assets/imgs/{{player.card.imgPath}}"/>
-        <div class="card-title">{{player.id}}</div>
-        <div class="card-subtitle">({{player.isAlive ? '生存' : '死亡'}})</div>
+        <div class="card-title">{{ player.id }}</div>
+        <div class="card-subtitle">({{ (player.isAlive ? 'player_alive' : 'player_dead') | translate }})</div>
       </ion-card>
     </ion-col>
   </ion-row>

@@ -7,7 +7,7 @@ import { GamePage } from '../game/game';
   templateUrl: 'home.html'
 })
 export class HomePage {
-  gamePage: GamePage = GamePage;
+  gamePage: GamePage;
 
   constructor(public navCtrl: NavController) {
 

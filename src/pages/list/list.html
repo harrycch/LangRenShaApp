@@ -3,7 +3,7 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>{{page_list_title}}</ion-title>
+    <ion-title>{{ "page_list_title" | translate }}</ion-title>
   </ion-navbar>
 </ion-header>
 
@@ -16,11 +16,11 @@
           <ion-col col-1>
             <ion-img width="100%" height="100%" src="assets/imgs/{{card.imgPath}}"></ion-img>
           </ion-col>
-          <ion-col col-5>
-            {{card.name}}
+          <ion-col col-3>
+            {{ card.name | translate }}
           </ion-col>
-          <ion-col col-6>
-            <span class="wrap-text">{{card.name+"_desc"}}</span>
+          <ion-col col-8>
+            <p class="wrap-text">{{card.name+"_desc" | translate}}</p>
           </ion-col>
         </ion-row>
       </ion-grid>

@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { Nav, Platform } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
+import { TranslateService } from '@ngx-translate/core';
 
 import { HomePage } from '../pages/home/home';
 import { ListPage } from '../pages/list/list';
@@ -17,13 +18,15 @@ export class MyApp {
 
   pages: Array<{title: string, component: any}>;
 
-  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen) {
+  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, translate: TranslateService) {
+    translate.setDefaultLang('zh-cn');
+
     this.initializeApp();
 
     // used for an example of ngFor and navigation
     this.pages = [
-      { title: '玩狼人杀', component: HomePage },
-      { title: '角色列表', component: ListPage },
+      { title: 'page_home_title', component: HomePage },
+      { title: 'page_list_title', component: ListPage },
       // { title: '游戏', component: GamePage}
     ];
 

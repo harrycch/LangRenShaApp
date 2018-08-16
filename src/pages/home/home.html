@@ -3,17 +3,14 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>玩狼人杀</ion-title>
+    <ion-title>{{ "page_home_title" | translate }}</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-  <h3>开始玩狼人杀</h3>
+  <h3>{{ "page_home_h3" | translate }}</h3>
+  <p>{{ "page_home_p" | translate }}</p>
 
-  <p>
-    请法官拿着手机，其他玩家围一圈，并安排好号码顺序（由1开始）
-  </p>
-
-  <button ion-button color="success" (click)="onStartGameClick()">开始新游戏</button>
-  <button ion-button color="light" continueGame>继续上次游戏</button>
+  <button ion-button color="success" (click)="onStartGameClick()">{{ "page_home_btn_start_game" | translate }}</button>
+  <button ion-button color="light" continueGame>{{ "page_home_btn_continue_game" | translate }}</button>
 </ion-content>

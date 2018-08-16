@@ -9,7 +9,7 @@ export abstract class Card {
 
 	static allTypes() : Array<CardType>{
 		const keys = Object.keys(CardType).filter(k => typeof CardType[k as any] === "number"); // ["A", "B"]
-		const values = keys.map(k => CardType[k as any]); // [0, 1]
+		const values = keys.map(k => +CardType[k as any]); // [0, 1]
 
 		return values;
 	}
@@ -18,31 +18,25 @@ export abstract class Card {
 		switch (+cardType) {
 			case CardType.Wolf:
 				return new WolfCard();
-				break;
 			case CardType.Villager:
 				return new VillagerCard();
-				break;
 			case CardType.Fortuneteller:
 				return new FortunetellerCard();
-				break;
 			case CardType.Witch:
 				return new WitchCard();
-				break;
 			case CardType.Hunter:
 				return new HunterCard();
-				break;
 			case CardType.Stupid:
 				return new StupidCard();
-				break;
 			default:
 				return new VillagerCard();
-				break;
 		}
 	}
 }
 
 export class WolfCard extends Card{
 	constructor (){
+		super();
 		this.type = CardType.Wolf;
 		this.team = Team.Wolf;
 		this.imgPath = 'card-wolf.jpg';
@@ -52,6 +46,7 @@ export class WolfCard extends Card{
 
 export class FortunetellerCard extends Card{
 	constructor (){
+		super();
 		this.type = CardType.Fortuneteller;
 		this.team = Team.God;
 		this.imgPath = 'card-fortuneteller.jpg';
@@ -64,6 +59,7 @@ export class WitchCard extends Card{
 	public isPoisonUsed :boolean = false;
 	
 	constructor (){
+		super();
 		this.type = CardType.Witch;
 		this.team = Team.God;
 		this.imgPath = 'card-witch.jpg';
@@ -73,6 +69,7 @@ export class WitchCard extends Card{
 
 export class HunterCard extends Card{
 	constructor (){
+		super();
 		this.type = CardType.Hunter;
 		this.team = Team.God;
 		this.imgPath = 'card-hunter.jpg';
@@ -83,6 +80,7 @@ export class HunterCard extends Card{
 export class StupidCard extends Card{
 	public isShowedUp : boolean = false;
 	constructor (){
+		super();
 		this.type = CardType.Stupid;
 		this.team = Team.God;
 		this.imgPath = 'card-stupid.jpg';
@@ -92,6 +90,7 @@ export class StupidCard extends Card{
 
 export class VillagerCard extends Card{
 	constructor (){
+		super();
 		this.type = CardType.Villager;
 		this.team = Team.Villager;
 		this.imgPath = 'card-villager.jpg';

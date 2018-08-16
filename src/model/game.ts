@@ -26,7 +26,7 @@ export class Game {
   private constructor(private opts : object) {
   	this.generatePlayerList();
 
-    if(opts.randomCards){
+    if(opts.hasOwnProperty('randomCards')){
       const shuffled = this.playerList.sort(() => .5 - Math.random());// shuffle  
       let selected = shuffled.slice(0,8);
       selected[0].setNewCard(new WolfCard());
@@ -59,7 +59,7 @@ export class Game {
   	}
   }
 
-  getAlivePlayerById(id : number) : Player | Undefined{
+  getAlivePlayerById(id : number) : Player {
   	return this.alivePlayerList.find(player => player.id === id);
   }
 
@@ -110,8 +110,8 @@ export class Game {
 
   checkEndGame(){
     for (var team in [Team.Wolf, Team.Villager, Team.God]) {
-      if (this.getAlivePlayersByTeam(team).length <= 0) {
-        this.allDeadTeam = team;
+      if (this.getAlivePlayersByTeam(+team).length <= 0) {
+        this.allDeadTeam = +team;
         this.isEnded = true;
         return;
       }
