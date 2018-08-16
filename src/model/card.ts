@@ -8,14 +8,14 @@ export abstract class Card {
 	public imgPath : string;
 
 	static allTypes() : Array<CardType>{
-		const keys = Object.keys(CardType).filter(k => typeof E[k as any] === "number"); // ["A", "B"]
+		const keys = Object.keys(CardType).filter(k => typeof CardType[k as any] === "number"); // ["A", "B"]
 		const values = keys.map(k => CardType[k as any]); // [0, 1]
 
 		return values;
 	}
 
 	static createCard(cardType : CardType) : Card{
-		switch (cardType) {
+		switch (+cardType) {
 			case CardType.Wolf:
 				return new WolfCard();
 				break;

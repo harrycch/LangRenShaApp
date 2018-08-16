@@ -7,13 +7,13 @@ import { Card, CardType } from '../../model/card';
   templateUrl: 'list.html'
 })
 export class ListPage {
-  cards: Array<Card>;
+  cards: Array<Card> = [];
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
     const cardTypes = Card.allTypes();
     for (var type in cardTypes) {
       let card = Card.createCard(type);
-      cards.push(card);
+      this.cards.push(card);
     }
   }
 
