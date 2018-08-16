@@ -55,6 +55,7 @@ export class FortunetellerCard extends Card{
 		this.type = CardType.Fortuneteller;
 		this.team = Team.God;
 		this.imgPath = 'card-fortuneteller.jpg';
+		this.name = 'card_fortuneteller';
 	}
 }
 
@@ -66,6 +67,7 @@ export class WitchCard extends Card{
 		this.type = CardType.Witch;
 		this.team = Team.God;
 		this.imgPath = 'card-witch.jpg';
+		this.name = 'card_witch';
 	}
 }
 
@@ -74,6 +76,7 @@ export class HunterCard extends Card{
 		this.type = CardType.Hunter;
 		this.team = Team.God;
 		this.imgPath = 'card-hunter.jpg';
+		this.name = 'card_hunter';
 	}
 }
 
@@ -83,6 +86,7 @@ export class StupidCard extends Card{
 		this.type = CardType.Stupid;
 		this.team = Team.God;
 		this.imgPath = 'card-stupid.jpg';
+		this.name = 'card_stupid';
 	}
 }
 
@@ -91,5 +95,6 @@ export class VillagerCard extends Card{
 		this.type = CardType.Villager;
 		this.team = Team.Villager;
 		this.imgPath = 'card-villager.jpg';
+		this.name = 'card_villager';
 	}
 }
