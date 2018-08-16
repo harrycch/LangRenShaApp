@@ -3,21 +3,22 @@
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>List</ion-title>
+    <ion-title>{{page_list_title}}</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
   <ion-list>
-    <button ion-item *ngFor="let item of items" (click)="itemTapped($event, item)">
-      <ion-icon [name]="item.icon" item-start></ion-icon>
-      {{item.title}}
-      <div class="item-note" item-end>
-        {{item.note}}
+    <button ion-item *ngFor="let card of cards" (click)="cardTapped($event, card)">
+      <!-- <ion-icon [name]="item.icon" item-start></ion-icon> -->
+      <img src="assets/imgs/{{card.imgPath}}"/>
+      {{card.name}}
+      <div class="card-note" item-end>
+        {{card.name+"_desc"}}
       </div>
     </button>
   </ion-list>
-  <div *ngIf="selectedItem" padding>
+  <!-- <div *ngIf="selectedItem" padding>
     You navigated here from <b>{{selectedItem.title}}</b>
-  </div>
+  </div> -->
 </ion-content>

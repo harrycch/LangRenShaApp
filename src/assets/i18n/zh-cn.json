@@ -1,0 +1,33 @@
+{
+	// Global use
+  "app_name" : "狼人杀法官",
+
+  // Game specific
+  // Player
+  "player_alive" : "生存",
+  "player_dead" : "死亡",
+
+  // Card
+  "card_wolf" : "狼人",
+  "card_villager" : "村民",
+  "card_fortuneteller" : "预言家",
+  "card_witch" : "女巫",
+  "card_hunter" : "猎人",
+  "card_stupid" : "白痴",
+
+  // Command
+  "command_go_to_night" : "天黑请闭眼",
+  "command_go_to_day" : "天亮了",
+  "command_wolf_kill" : "请狼人开眼，选择杀几号玩家？",
+
+  // Page specific
+  // Home page
+  "page_home_title" : "玩狼人杀",
+  "page_home_h3" : "开始玩狼人杀",
+  "page_home_p" : "请法官拿着手机，其他玩家围一圈，并安排好号码顺序（由1开始）",
+  "page_home_btn_start_game" : "开始新游戏",
+  "page_home_btn_continue_game" : "继续上次游戏",
+
+  // List page
+  "page_list_title" : "角色列表",
+}

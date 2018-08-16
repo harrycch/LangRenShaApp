@@ -2,9 +2,43 @@ export enum Team {Wolf, Villager, God};
 export enum CardType {Wolf, Villager, Fortuneteller, Witch, Hunter, Stupid};
 
 export abstract class Card {
+	public name : string;
 	public team : Team;
 	public type : CardType;
 	public imgPath : string;
+
+	static allTypes() : Array<CardType>{
+		const keys = Object.keys(CardType).filter(k => typeof E[k as any] === "number"); // ["A", "B"]
+		const values = keys.map(k => CardType[k as any]); // [0, 1]
+
+		return values;
+	}
+
+	static createCard(cardType : CardType) : Card{
+		switch (cardType) {
+			case CardType.Wolf:
+				return new WolfCard();
+				break;
+			case CardType.Villager:
+				return new VillagerCard();
+				break;
+			case CardType.Fortuneteller:
+				return new FortunetellerCard();
+				break;
+			case CardType.Witch:
+				return new WitchCard();
+				break;
+			case CardType.Hunter:
+				return new HunterCard();
+				break;
+			case CardType.Stupid:
+				return new StupidCard();
+				break;
+			default:
+				return new VillagerCard();
+				break;
+		}
+	}
 }
 
 export class WolfCard extends Card{
@@ -12,6 +46,7 @@ export class WolfCard extends Card{
 		this.type = CardType.Wolf;
 		this.team = Team.Wolf;
 		this.imgPath = 'card-wolf.jpg';
+		this.name = 'card_wolf';
 	}
 }
 
