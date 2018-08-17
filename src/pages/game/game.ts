@@ -90,7 +90,6 @@ export class GamePage {
         }else {
           return 'command_wolf_kill_end';
         }
-        break;
 
       case GameTurn.Fortuneteller:
         if(this.game.checkedPlayer == undefined){
@@ -98,7 +97,6 @@ export class GamePage {
         }else {
           return 'command_fortuneteller_check_end';
         }
-        break;
       
       case GameTurn.Witch:
         if(this.game.potionedPlayer == undefined){
@@ -108,7 +106,6 @@ export class GamePage {
         }else{
           return 'command_witch_poison_end';
         }
-        break;
       
       case GameTurn.Hunter:
         if(!this.game.isHunterNotified){
@@ -116,7 +113,6 @@ export class GamePage {
         }else {
           return 'command_hunter_poison_end';
         }
-        break;
       
       case GameTurn.PoliceElection:
         if(this.game.policePlayer == undefined){
@@ -126,7 +122,6 @@ export class GamePage {
         }else{
           return 'command_police_election_done';
         }
-        break;
       
       case GameTurn.Vote:
         if(this.game.votedPlayer == undefined){
@@ -142,7 +137,6 @@ export class GamePage {
         }else {
           return 'command_vote_end';
         }
-        break;
       
       default:
         break;
