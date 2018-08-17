@@ -13,7 +13,14 @@ export enum GameTurn {
 	Vote
 };
 
+export enum GameTime{
+  Day,
+  Night
+}
+
 export class Game {
+  public static MIN_PLAYER_COUNT = 8;
+
 	private static instance: Game;
 	public playerList : Array<Player> = [];
 	public playerCount : number = 12;
@@ -23,10 +30,22 @@ export class Game {
   public isEnded : boolean = false;
   public allDeadTeam : Team;
 
-  private constructor(private opts : object) {
-  	this.generatePlayerList();
+  public policePlayer? : Player;
+  public killedPlayer? : Player | boolean;
+  public checkedPlayer? : Player | boolean;
+  public potionedPlayer? : Player | boolean;
+  public poisonedPlayer? : Player | boolean;
+  public votedPlayer? : Player | boolean;
+  public isHunterNotified : boolean = false;
 
-    if(opts.hasOwnProperty('randomCards')){
+  private constructor(private opts : object) {
+    if (opts.hasOwnProperty('playerCount') && typeof opts.playerCount == 'number' && opts.playerCount >= Game.MIN_PLAYER_COUNT) {
+      this.playerCount = opts.playerCount;
+    }
+
+    this.generatePlayerList();
+
+    if(opts.hasOwnProperty('randomCards') && typeof opts.randomCards == 'boolean' && opts.randomCards ){
       const shuffled = this.playerList.sort(() => .5 - Math.random());// shuffle  
       let selected = shuffled.slice(0,8);
       selected[0].setNewCard(new WolfCard());
@@ -52,11 +71,29 @@ export class Game {
     return this.playerList.filter(player => player.isAlive === true);
   }
 
+  public get time() : GameTime{
+    if (this.currentTurn in [
+      GameTurn.Wolf,
+      GameTurn.Fortuneteller,
+      GameTurn.Witch,
+      GameTurn.Hunter,
+      GameTurn.Stupid
+      ]) { 
+      return GameTime.Night;
+    } else {
+      return GameTime.Day;
+    }
+  }
+
   generatePlayerList(){
   	this.playerList = [];
-  	for (var id = 1; id <= this.playerCount; ++id) {
+  	for (let id = 1; id <= this.playerCount; ++id) {
   		this.playerList.push((new Player(id)).setNewCard(new VillagerCard()));
   	}
+  }
+
+  getPlayersByCard(cardType: CardType) : Array<Player>{
+    return this.playerList.filter(player => player.card.type === cardType);
   }
 
   getAlivePlayerById(id : number) : Player {
@@ -77,39 +114,154 @@ export class Game {
   	this.isInitialTurn = true;
   }
 
-  proceed(){
+  proceed(targetId? : number){
   	switch (this.currentTurn) {
-  		case GameTurn.Wolf:
-  			this.currentTurn = GameTurn.Fortuneteller;
-  			break;
-  		case GameTurn.Fortuneteller:
-  			this.currentTurn = GameTurn.Witch;
-  			break;
-  		case GameTurn.Witch:
-  			this.currentTurn = GameTurn.Hunter;
-  			break;
-  		case GameTurn.Hunter:
-  			if(this.isInitialTurn){
-          this.currentTurn = GameTurn.PoliceElection;
-        }else{
-          this.checkEndGame();
-          this.currentTurn = GameTurn.Vote;
+  		
+      case GameTurn.Wolf:
+        if(this.killedPlayer == undefined){
+          if(targetId != undefined){
+            this.killedPlayer = this.getAlivePlayerById(targetId);
+          }else {
+            this.killedPlayer = false;
+          }
+        }else {
+          this.currentTurn = GameTurn.Fortuneteller;  
         }
   			break;
+
+  		case GameTurn.Fortuneteller:
+        if(this.checkedPlayer == undefined){
+          if(targetId != undefined){
+            this.checkedPlayer = this.getAlivePlayerById(targetId);
+          }else {
+            this.checkedPlayer = false;  
+          }
+        }else {
+          this.currentTurn = GameTurn.Witch;
+        }
+  			break;
+  		
+      case GameTurn.Witch:
+        let witchCard : WitchCard = this.getPlayersByCard(CardType.Witch)[0].card;
+  			if(this.potionedPlayer == undefined){
+          if(this.killedPlayer instanceof Player 
+            && targetId == this.killedPlayer.id
+            && (this.killerPlayer.card.type != CardType.Witch || this.currentRound == 1)
+            && !witchCard.isPotionUsed
+            ){
+            this.potionedPlayer = this.killedPlayer;
+          }else{
+            this.potionedPlayer = false;
+          }
+        }else if(this.poisonedPlayer == undefined) {
+          if(targetId != undefined && !witchCard.isPoisonUsed && this.potionedPlayer == false){
+            this.poisonedPlayer = this.getAlivePlayerById(targetId);
+          }else{
+            this.poisonedPlayer = false;
+          }
+        }else{
+          this.currentTurn = GameTurn.Hunter;
+        }
+  			break;
+  		
+      case GameTurn.Hunter:
+        if(!this.isHunterNotified){
+          this.isHunterNotified = true;
+        }else {
+          if(this.isInitialTurn){
+            this.currentTurn = GameTurn.PoliceElection;
+          }else{
+            this.processAndClearTargets();
+            this.checkEndGame();
+            if(!this.isEnded){
+              this.currentTurn = GameTurn.Vote;  
+            }
+          }
+        }
+  			break;
+      
       case GameTurn.PoliceElection:
-        this.currentTurn = GameTurn.Vote;
+        if(this.policePlayer == undefined){
+          if(targetId != undefined){
+            this.policePlayer = this.getAlivePlayerById(targetId);
+          }else {
+            this.policePlayer = false;
+          }
+        }else {
+          this.processAndClearTargets();
+          this.checkEndGame();
+          if(!this.isEnded){
+            this.currentTurn = GameTurn.Vote;  
+          }
+        }
         break;
+      
       case GameTurn.Vote:
-        this.checkEndGame();
-        this.currentTurn = GameTurn.Wolf;
+        if(this.votedPlayer == undefined){
+          if(targetId != undefined){
+            this.votedPlayer = this.getAlivePlayerById(targetId);
+          }else {
+            this.votedPlayer = false;
+          }
+        }else {
+          this.processAndClearTargets();
+          this.checkEndGame();
+          if(!this.isEnded){
+            this.currentTurn = GameTurn.Wolf;  
+          }
+        }
         break;
-  		default:
+  		
+      default:
   			break;
   	}
+
+    this.skipUnusedCards();
+  }
+
+  skipUnusedCards(){
+    if(
+      (this.currentTurn == GameTurn.Fortuneteller && this.getPlayersByCard(CardType.Fortuneteller).length <= 0) ||
+      (this.currentTurn == GameTurn.Witch && this.getPlayersByCard(CardType.Witch).length <= 0) ||
+      (this.currentTurn == GameTurn.Hunter && this.getPlayersByCard(CardType.Hunter).length <= 0) ||
+      (this.currentTurn == GameTurn.Stupid && this.getPlayersByCard(CardType.Stupid).length <= 0)
+      ){
+      this.proceed();
+    }
+  }
+
+  processAndClearTargets(){
+    if(this.potionedPlayer == false && this.killedPlayer instanceof Player){
+      this.killedPlayer.isAlive = false;
+    }
+
+    if(this.potionedPlayer instanceof Player){
+      this.getPlayersByCard(CardType.Witch)[0].card.isPotionUsed = true;
+    }
+
+    if(this.poisonedPlayer instanceof Player){
+      this.poisonedPlayer.isAlive = false;
+      this.getPlayersByCard(CardType.Witch)[0].card.isPoisonUsed = true;
+    }
+
+    if(this.votedPlayer instanceof Player){
+      if(this.votedPlayer.card.type == CardType.Stupid){
+        this.votedPlayer.card.isShowedUp = true;
+      }else{
+        this.votedPlayer.isAlive = false;
+      }
+    }
+
+    this.killedPlayer = undefined;
+    this.checkedPlayer = undefined;
+    this.potionedPlayer = undefined;
+    this.poisonedPlayer = undefined;
+    this.votedPlayer = undefined;
+    this.isHunterNotified = false;
   }
 
   checkEndGame(){
-    for (var team in [Team.Wolf, Team.Villager, Team.God]) {
+    for (let team in [Team.Wolf, Team.Villager, Team.God]) {
       if (this.getAlivePlayersByTeam(+team).length <= 0) {
         this.allDeadTeam = +team;
         this.isEnded = true;

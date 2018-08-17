@@ -11,7 +11,7 @@ export class ListPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
     const cardTypes = Card.allTypes();
-    for (var type in cardTypes) {
+    for (let type in cardTypes) {
       let card = Card.createCard(+type);
       this.cards.push(card);
     }
