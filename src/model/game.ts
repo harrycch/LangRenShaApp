@@ -26,11 +26,10 @@ export class Game {
 	public playerCount : number = 12;
 	public currentRound : number;
 	public currentTurn : GameTurn;
-	public isInitialTurn : boolean;
   public isEnded : boolean = false;
   public allDeadTeam : Team;
 
-  public policePlayer? : Player;
+  public policePlayer? : Player | boolean;
   public killedPlayer? : Player | boolean;
   public checkedPlayer? : Player | boolean;
   public potionedPlayer? : Player | boolean;
@@ -39,13 +38,13 @@ export class Game {
   public isHunterNotified : boolean = false;
 
   private constructor(private opts : object) {
-    if (opts.hasOwnProperty('playerCount') && typeof opts.playerCount == 'number' && opts.playerCount >= Game.MIN_PLAYER_COUNT) {
-      this.playerCount = opts.playerCount;
+    if (opts.hasOwnProperty('playerCount') && typeof opts['playerCount'] == 'number' && opts['playerCount'] >= Game.MIN_PLAYER_COUNT) {
+      this.playerCount = opts['playerCount'];
     }
 
     this.generatePlayerList();
 
-    if(opts.hasOwnProperty('randomCards') && typeof opts.randomCards == 'boolean' && opts.randomCards ){
+    if(opts.hasOwnProperty('randomCards') && typeof opts['randomCards'] == 'boolean' && opts['randomCards'] ){
       const shuffled = this.playerList.sort(() => .5 - Math.random());// shuffle  
       let selected = shuffled.slice(0,8);
       selected[0].setNewCard(new WolfCard());
@@ -65,6 +64,10 @@ export class Game {
       Game.instance = new Game(opts);
     }
     return Game.instance;
+  }
+
+  public get isInitialRound() : boolean {
+    return (this.currentRound == 1);
   }
 
   public get alivePlayerList() : Array<Player> {
@@ -111,7 +114,6 @@ export class Game {
   start(){
   	this.currentRound = 1;
   	this.currentTurn = GameTurn.Wolf;
-  	this.isInitialTurn = true;
   }
 
   proceed(targetId? : number){
@@ -142,11 +144,11 @@ export class Game {
   			break;
   		
       case GameTurn.Witch:
-        let witchCard : WitchCard = this.getPlayersByCard(CardType.Witch)[0].card;
+        let witchCard : WitchCard = this.getPlayersByCard(CardType.Witch)[0].card as WitchCard;
   			if(this.potionedPlayer == undefined){
           if(this.killedPlayer instanceof Player 
             && targetId == this.killedPlayer.id
-            && (this.killerPlayer.card.type != CardType.Witch || this.currentRound == 1)
+            && (this.killedPlayer.card.type != CardType.Witch || this.currentRound == 1)
             && !witchCard.isPotionUsed
             ){
             this.potionedPlayer = this.killedPlayer;
@@ -168,7 +170,7 @@ export class Game {
         if(!this.isHunterNotified){
           this.isHunterNotified = true;
         }else {
-          if(this.isInitialTurn){
+          if(this.isInitialRound){
             this.currentTurn = GameTurn.PoliceElection;
           }else{
             this.processAndClearTargets();
@@ -207,7 +209,9 @@ export class Game {
           this.processAndClearTargets();
           this.checkEndGame();
           if(!this.isEnded){
-            this.currentTurn = GameTurn.Wolf;  
+            // To next round
+            this.currentRound += 1;
+            this.currentTurn = GameTurn.Wolf;
           }
         }
         break;
@@ -235,18 +239,19 @@ export class Game {
       this.killedPlayer.isAlive = false;
     }
 
+    let witchCard : WitchCard = this.getPlayersByCard(CardType.Witch)[0].card as WitchCard;
     if(this.potionedPlayer instanceof Player){
-      this.getPlayersByCard(CardType.Witch)[0].card.isPotionUsed = true;
+      witchCard.isPotionUsed = true;
     }
 
     if(this.poisonedPlayer instanceof Player){
       this.poisonedPlayer.isAlive = false;
-      this.getPlayersByCard(CardType.Witch)[0].card.isPoisonUsed = true;
+      witchCard.isPoisonUsed = true;
     }
 
     if(this.votedPlayer instanceof Player){
       if(this.votedPlayer.card.type == CardType.Stupid){
-        this.votedPlayer.card.isShowedUp = true;
+        (this.votedPlayer.card as StupidCard).isShowedUp = true;
       }else{
         this.votedPlayer.isAlive = false;
       }
