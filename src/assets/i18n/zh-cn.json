@@ -35,6 +35,7 @@
   "command_hunter_poison_end" : "猎人请闭眼。",
   "command_go_to_day" : "天亮了，所有玩家请开眼",
   "command_police_election" : "开始竞选警长环节，由{{id}}号玩家开始发言。",
+  "command_police_election_none" : "警徽被撕掉。",
   "command_police_election_done" : "{{id}}号玩家当选警长。",
   "command_announce_dead" : "昨天晚上死掉的是{{ids}}号玩家。",
   "command_announce_no_dead" : "昨天晚上是平安夜。",

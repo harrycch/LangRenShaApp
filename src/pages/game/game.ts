@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, AlertController } from 'ionic-angular';
-import { Game } from '../../model/game';
+import { Game, GameTime, GameTurn } from '../../model/game';
+import { Player } from '../../model/player';
 import { TranslateService } from '@ngx-translate/core';
 
 /**
@@ -70,5 +71,81 @@ export class GamePage {
   private exitPage() {
     this.showAlertMessage = false;
     this.navCtrl.pop();
+  }
+
+  private get currentTimeMsg() : string {
+    if (this.game.time == GameTime.Day) {
+      return 'command_go_to_day';
+    }else{
+      return 'command_go_to_night';
+    }
+  }
+
+  private get currentCommandMsg() : string {
+    switch (this.game.currentTurn) {
+      
+      case GameTurn.Wolf:
+        if(this.game.killedPlayer == undefined){
+          return 'command_wolf_kill';
+        }else {
+          return 'command_wolf_kill_end';
+        }
+        break;
+
+      case GameTurn.Fortuneteller:
+        if(this.game.checkedPlayer == undefined){
+          return 'command_fortuneteller_check';
+        }else {
+          return 'command_fortuneteller_check_end';
+        }
+        break;
+      
+      case GameTurn.Witch:
+        if(this.game.potionedPlayer == undefined){
+          return 'command_witch_potion';
+        }else if(this.game.poisonedPlayer == undefined) {
+          return 'command_witch_poison';
+        }else{
+          return 'command_witch_poison_end';
+        }
+        break;
+      
+      case GameTurn.Hunter:
+        if(!this.game.isHunterNotified){
+          return 'command_hunter_poison';
+        }else {
+          return 'command_hunter_poison_end';
+        }
+        break;
+      
+      case GameTurn.PoliceElection:
+        if(this.game.policePlayer == undefined){
+          return 'command_police_election';
+        }else if(this.game.policePlayer == false){
+          return 'command_police_election_none';
+        }else{
+          return 'command_police_election_done';
+        }
+        break;
+      
+      case GameTurn.Vote:
+        if(this.game.votedPlayer == undefined){
+          if (this.game.policePlayer == false) {
+            return 'command_vote_without_police';  
+          }else{
+            if (this.game.numOfDeadThisNight == 1){
+              return 'command_vote_with_police_1dead';
+            }else{
+              return 'command_vote_with_police_ndead'; // include case for 0 death
+            }
+          }
+        }else {
+          return 'command_vote_end';
+        }
+        break;
+      
+      default:
+        break;
+    }
   }
 }

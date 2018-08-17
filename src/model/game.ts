@@ -36,6 +36,7 @@ export class Game {
   public poisonedPlayer? : Player | boolean;
   public votedPlayer? : Player | boolean;
   public isHunterNotified : boolean = false;
+  public numOfDeadThisNight : number = 0;
 
   private constructor(private opts : object) {
     if (opts.hasOwnProperty('playerCount') && typeof opts['playerCount'] == 'number' && opts['playerCount'] >= Game.MIN_PLAYER_COUNT) {
@@ -212,6 +213,7 @@ export class Game {
             // To next round
             this.currentRound += 1;
             this.currentTurn = GameTurn.Wolf;
+            this.numOfDeadThisNight = 0;
           }
         }
         break;
@@ -237,6 +239,7 @@ export class Game {
   processAndClearTargets(){
     if(this.potionedPlayer == false && this.killedPlayer instanceof Player){
       this.killedPlayer.isAlive = false;
+      this.numOfDeadThisNight++;
     }
 
     let witchCard : WitchCard = this.getPlayersByCard(CardType.Witch)[0].card as WitchCard;
@@ -246,6 +249,7 @@ export class Game {
 
     if(this.poisonedPlayer instanceof Player){
       this.poisonedPlayer.isAlive = false;
+      this.numOfDeadThisNight++;
       witchCard.isPoisonUsed = true;
     }
 
