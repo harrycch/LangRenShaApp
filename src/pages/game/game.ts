@@ -73,7 +73,7 @@ export class GamePage {
     this.navCtrl.pop();
   }
 
-  private get currentTimeMsg() : string {
+  get currentTimeMsg() : string {
     if (this.game.time == GameTime.Day) {
       return 'command_go_to_day';
     }else{
@@ -81,7 +81,7 @@ export class GamePage {
     }
   }
 
-  private get currentCommandMsg() : string {
+  get currentCommandMsg() : string {
     switch (this.game.currentTurn) {
       
       case GameTurn.Wolf:
@@ -141,5 +141,9 @@ export class GamePage {
       default:
         break;
     }
+  }
+
+  onClickProceed(){
+    this.game.proceed();
   }
 }
