@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, NavParams, AlertController } from 'ionic-angular';
 import { Game, GameTime, GameTurn } from '../../model/game';
 import { Player } from '../../model/player';
+import { Team, CardType } from '../../model/card';
 import { TranslateService } from '@ngx-translate/core';
 
 /**
@@ -117,11 +118,14 @@ export class GamePage {
       case GameTurn.PoliceElection:
         if(this.game.policePlayer == undefined){
           return 'command_police_election';
-        }else if(this.game.policePlayer == false){
-          return 'command_police_election_none';
         }else{
-          return 'command_police_election_done';
+          return 'command_police_election_end';
         }
+        // else if(this.game.policePlayer == false){
+        //   return 'command_police_election_none';
+        // }else{
+        //   return 'command_police_election_done';
+        // }
       
       case GameTurn.Vote:
         if(this.game.votedPlayer == undefined){
@@ -143,7 +147,84 @@ export class GamePage {
     }
   }
 
+  get currentCommandParams() : object {
+    switch (this.game.currentTurn) {
+      
+      case GameTurn.Wolf:
+        return {};
+
+      case GameTurn.Fortuneteller:
+        if(this.game.checkedPlayer == undefined){
+          return {}; // return 'command_fortuneteller_check';
+        }else {
+          return {good: (this.game.checkedPlayer.card.team != Team.Wolf)};// return 'command_fortuneteller_check_end';
+        }
+      
+      case GameTurn.Witch:
+        if(this.game.potionedPlayer == undefined){
+          // return 'command_witch_potion';
+          if (this.game.killedPlayer instanceof Player) {
+            return {id: this.game.killedPlayer.id};  
+          }else{
+            return {};
+          }
+        }else if(this.game.poisonedPlayer == undefined) {
+          return {};// return 'command_witch_poison';
+        }else{
+          return {};// return 'command_witch_poison_end';
+        }
+      
+      case GameTurn.Hunter:
+        if(!this.game.isHunterNotified){
+          // return 'command_hunter_poison';  
+          if (this.game.poisonedPlayer instanceof Player) {
+            let hunter : Player = this.game.getPlayersByCard(CardType.Hunter)[0];
+            return {poison: (this.game.poisonedPlayer.id == hunter.id)};
+          }else {
+            return {};
+          }
+        }else {
+          return {};// return 'command_hunter_poison_end';
+        }
+      
+      case GameTurn.PoliceElection:
+        if(this.game.policePlayer == undefined){
+          return {};// return 'command_police_election';
+        }else if(this.game.policePlayer == false){
+          return {};// return 'command_police_election_none';
+        }else{
+          return {};// return 'command_police_election_done';
+        }
+      
+      case GameTurn.Vote:
+        if(this.game.votedPlayer == undefined){
+          if (this.game.policePlayer == false) {
+            return {};// return 'command_vote_without_police';  
+          }else{
+            if (this.game.numOfDeadThisNight == 1){
+              return {};// return 'command_vote_with_police_1dead';
+            }else{
+              return {};// return 'command_vote_with_police_ndead'; // include case for 0 death
+            }
+          }
+        }else {
+          if (this.game.votedPlayer instanceof Player) {
+            return {id: this.game.votedPlayer.id};// return 'command_vote_end';
+          }else{
+            return {};
+          }
+        }
+      
+      default:
+        return {};
+    }
+  }
+
   onClickProceed(event){
     this.game.proceed();
+  }
+
+  onClickCard(event, id){
+    this.game.proceed(id);
   }
 }
