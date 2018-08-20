@@ -157,7 +157,11 @@ export class GamePage {
         if(this.game.checkedPlayer == undefined){
           return {}; // return 'command_fortuneteller_check';
         }else {
-          return {good: (this.game.checkedPlayer.card.team != Team.Wolf)};// return 'command_fortuneteller_check_end';
+          if (this.game.checkedPlayer instanceof Player) {
+            return {good: (this.game.checkedPlayer.card.team != Team.Wolf)};// return 'command_fortuneteller_check_end';
+          }else {
+            return {};
+          }
         }
       
       case GameTurn.Witch:
