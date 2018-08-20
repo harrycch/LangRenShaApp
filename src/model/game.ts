@@ -26,6 +26,8 @@ export class Game {
 	public playerCount : number = 12;
 	public currentRound : number;
 	public currentTurn : GameTurn;
+  public isStarted : boolean = false;
+  public isPaused : boolean = false;
   public isEnded : boolean = false;
   public allDeadTeam : Team;
 
@@ -115,6 +117,15 @@ export class Game {
   start(){
   	this.currentRound = 1;
   	this.currentTurn = GameTurn.Wolf;
+    this.isStarted = true;
+  }
+
+  pause(){
+    this.isPaused = true;
+  }
+
+  continue(){
+    this.isPaused = false;
   }
 
   proceed(targetId? : number){

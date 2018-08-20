@@ -24,7 +24,15 @@ export class GamePage {
     this.game = Game.getInstance({
       randomCards : true
     });
-    this.game.start();
+
+    if (this.game.isStarted && this.game.isPaused) { 
+      this.game.continue();
+    } else if (this.game.isStarted) { 
+      this.game.proceed();
+    } else {
+      this.game.start();
+    }
+    console.log("Current Game: Round "+this.game.currentRound+" - "+this.currentCommandMsg);
   }
 
   ionViewDidLoad() {
