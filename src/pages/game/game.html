@@ -30,7 +30,7 @@
       </ion-card>
     </ion-col>
   </ion-row>
-  <ion-row (click)="()=>{onClickProceed()}">
+  <ion-row (click)="onClickProceed($event)">
     <ion-col>
       <p>{{ currentTimeMsg | translate }}<br>{{ currentCommandMsg | translate }}</p>
     </ion-col>

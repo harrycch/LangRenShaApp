@@ -143,7 +143,7 @@ export class GamePage {
     }
   }
 
-  onClickProceed(){
+  onClickProceed(event){
     this.game.proceed();
   }
 }
