@@ -23,16 +23,18 @@
   <ion-grid>
   <ion-row class="card-background-page">
     <ion-col col-3 *ngFor="let player of game.playerList">
-      <ion-card>
+      <ion-card (click)="onClickCard($event, player.id)">
         <img class="card-image" src="assets/imgs/{{player.card.imgPath}}"/>
         <div class="card-title">{{ player.id }}</div>
         <div class="card-subtitle">({{ (player.isAlive ? 'player_alive' : 'player_dead') | translate }})</div>
       </ion-card>
     </ion-col>
   </ion-row>
-  <ion-row>
+  <ion-row (click)="onClickProceed($event)">
     <ion-col>
-      <p>{{ currentTimeMsg | translate }}<br>{{ currentCommandMsg | translate }}</p>
+      <p *ngIf="(currentTimeMsg!='')">{{ currentTimeMsg | translate }}</p>
+      <p *ngIf="(currentAnnouncementMsg!='')">{{ currentAnnouncementMsg | translate:currentMsgParams}}</p>
+      <p *ngIf="(currentCommandMsg!='')">{{ currentCommandMsg | translate:currentMsgParams }}</p>
     </ion-col>
   </ion-row>
 </ion-grid>

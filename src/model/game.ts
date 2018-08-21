@@ -38,7 +38,7 @@ export class Game {
   public poisonedPlayer? : Player | boolean;
   public votedPlayer? : Player | boolean;
   public isHunterNotified : boolean = false;
-  public numOfDeadThisNight : number = 0;
+  public deadIdsThisNight : number[] = []
 
   private constructor(private opts : object) {
     if (opts.hasOwnProperty('playerCount') && typeof opts['playerCount'] == 'number' && opts['playerCount'] >= Game.MIN_PLAYER_COUNT) {
@@ -71,6 +71,10 @@ export class Game {
 
   public get isInitialRound() : boolean {
     return (this.currentRound == 1);
+  }
+
+  public get numOfDeadThisNight() : number {
+    return this.deadIdsThisNight.length;
   }
 
   public get alivePlayerList() : Array<Player> {
@@ -129,6 +133,10 @@ export class Game {
   }
 
   proceed(targetId? : number){
+    if (this.isEnded) {
+      return;
+    }
+
   	switch (this.currentTurn) {
   		
       case GameTurn.Wolf:
@@ -204,9 +212,7 @@ export class Game {
         }else {
           this.processAndClearTargets();
           this.checkEndGame();
-          if(!this.isEnded){
-            this.currentTurn = GameTurn.Vote;  
-          }
+          this.currentTurn = GameTurn.Vote;
         }
         break;
       
@@ -224,7 +230,7 @@ export class Game {
             // To next round
             this.currentRound += 1;
             this.currentTurn = GameTurn.Wolf;
-            this.numOfDeadThisNight = 0;
+            this.deadIdsThisNight = [];
           }
         }
         break;
@@ -233,7 +239,9 @@ export class Game {
   			break;
   	}
 
-    this.skipUnusedCards();
+    if (!this.isEnded) {
+      this.skipUnusedCards();
+    }
   }
 
   skipUnusedCards(){
@@ -250,7 +258,7 @@ export class Game {
   processAndClearTargets(){
     if(this.potionedPlayer == false && this.killedPlayer instanceof Player){
       this.killedPlayer.isAlive = false;
-      this.numOfDeadThisNight++;
+      this.deadIdsThisNight.push(this.killedPlayer.id);
     }
 
     let witchCard : WitchCard = this.getPlayersByCard(CardType.Witch)[0].card as WitchCard;
@@ -260,7 +268,7 @@ export class Game {
 
     if(this.poisonedPlayer instanceof Player){
       this.poisonedPlayer.isAlive = false;
-      this.numOfDeadThisNight++;
+      this.deadIdsThisNight.push(this.poisonedPlayer.id);
       witchCard.isPoisonUsed = true;
     }
 
