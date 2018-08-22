@@ -36,7 +36,7 @@ export class GamePage {
     }
 
     this.refreshMessages();
-    console.log("Current Game: Round "+this.game.currentRound+" - "+this.currentCommandMsg);
+    console.log("Current Game: Round "+this.game.currentRound+" - "+this.gameMessage.command);
   }
 
   ionViewDidLoad() {
@@ -81,33 +81,27 @@ export class GamePage {
   }
 
   private exitPage() {
+    this.game.pause();
     this.showAlertMessage = false;
     this.navCtrl.pop();
   }
 
-  get currentTimeMsg() : string {
-    return this.gameMessage.time;
-  }
-
-  get currentAnnouncementMsg() : string {
-    return this.gameMessage.announcement;
-  }
-
-  get currentCommandMsg() : string {
-    return this.gameMessage.command;
-  }
-
-  get currentMsgParams() : object {
-    return this.gameMessage.params;
-  }
-
   onClickProceed(event){
-    this.game.proceed();
-    this.refreshMessages();
+    if (this.gameMessage.negativeBtn == '') {
+      this.game.proceed();
+      this.refreshMessages();
+    }
   }
 
-  onClickCard(event, id){
-    this.game.proceed(id);
+  onClickCard(event, player: Player){
+    if (this.gameMessage.negativeBtn != '' && player.isAlive) {
+      this.game.proceed(player.id);
+      this.refreshMessages();
+    }
+  }
+
+  onClickNegativeBtn(event){
+    this.game.proceed();
     this.refreshMessages();
   }
 
