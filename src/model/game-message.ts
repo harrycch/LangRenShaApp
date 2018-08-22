@@ -12,12 +12,12 @@ export class GameMessage {
   private constructor() {
   }
 
-  static public generate(game: Game, translate: TranslateService) : GameMessage{
+  public static generate(game: Game, translate: TranslateService) : GameMessage{
   	let msgObj = new GameMessage();
 
     if (game.isEnded) {
       msgObj.command = 'command_end_game';
-      translate.get(this.game.allDeadTeam == Team.Wolf ? 'team_villager_god' : 'team_wolf')
+      translate.get(game.allDeadTeam == Team.Wolf ? 'team_villager_god' : 'team_wolf')
         .subscribe(t => {msgObj.params['team']=t});
     }else{
 
@@ -108,7 +108,7 @@ export class GameMessage {
 	      
 	      case GameTurn.Vote:
 	        if(game.votedPlayer == undefined){
-	        	if (this.game.numOfDeadThisNight > 0) { 
+	        	if (game.numOfDeadThisNight > 0) { 
 	        		msgObj.announcement = 'command_announce_dead';
 	            msgObj.params['ids'] = game.deadIdsThisNight;
 	          }else{
