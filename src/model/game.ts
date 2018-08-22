@@ -91,7 +91,7 @@ export class Game {
   }
 
   public get isTimeChanged() : boolean {
-    return this.time == this.previousTime;
+    return this.time != this.previousTime;
   }
 
   public get currentTurn() : GameTurn {
