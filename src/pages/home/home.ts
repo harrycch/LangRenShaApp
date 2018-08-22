@@ -14,7 +14,18 @@ export class HomePage {
   }
 
   onStartGameClick(){
-    this.navCtrl.push(GamePage, {}, {
+    this.navCtrl.push(GamePage, {
+      isContinue: false
+    }, {
+      // animate: false
+      animation: 'wp-transition'
+    });
+  }
+
+  onContinueGameClick(){
+    this.navCtrl.push(GamePage, {
+      isContinue: true
+    }, {
       // animate: false
       animation: 'wp-transition'
     });

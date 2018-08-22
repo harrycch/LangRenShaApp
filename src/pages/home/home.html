@@ -12,5 +12,5 @@
   <p>{{ "page_home_p" | translate }}</p>
 
   <button ion-button color="success" (click)="onStartGameClick()">{{ "page_home_btn_start_game" | translate }}</button>
-  <button ion-button color="light" continueGame>{{ "page_home_btn_continue_game" | translate }}</button>
+  <button ion-button color="light" continueGame (click)="onContinueGameClick()">{{ "page_home_btn_continue_game" | translate }}</button>
 </ion-content>

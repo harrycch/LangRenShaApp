@@ -23,14 +23,19 @@ export class GamePage {
   public gameMessage: GameMessage;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private alertCtrl: AlertController, private translate: TranslateService) {
-    this.game = Game.getInstance({
+    let opts = {
       randomCards : true
-    });
+    };
+
+    if (navParams.get('isContinue')!=true) {
+      Game.destroyInstance();
+    }
+
+    this.game = Game.getInstance(opts);
 
     if (this.game.isStarted && this.game.isPaused) { 
       this.game.continue();
     } else if (this.game.isStarted) { 
-      this.game.proceed();
     } else {
       this.game.start();
     }

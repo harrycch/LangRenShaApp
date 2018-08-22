@@ -70,6 +70,10 @@ export class Game {
     return Game.instance;
   }
 
+  static destroyInstance(){
+    Game.instance = null;
+  }
+
   public get isInitialRound() : boolean {
     return (this.currentRound == 1);
   }
