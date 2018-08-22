@@ -25,7 +25,8 @@ export class Game {
 	public playerList : Array<Player> = [];
 	public playerCount : number = 12;
 	public currentRound : number;
-	public currentTurn : GameTurn;
+	private _currentTurn : GameTurn;
+  public previousTurn : GameTurn;
   public isStarted : boolean = false;
   public isPaused : boolean = false;
   public isEnded : boolean = false;
@@ -81,8 +82,29 @@ export class Game {
     return this.playerList.filter(player => player.isAlive === true);
   }
 
+  public get previousTime() : GameTime{
+    return this.getTimeFromTurn(this.previousTurn);
+  }
+
   public get time() : GameTime{
-    if (this.currentTurn in [
+    return this.getTimeFromTurn(this.currentTurn);
+  }
+
+  public get isTimeChanged() : boolean {
+    return this.time == this.previousTime;
+  }
+
+  public get currentTurn() : GameTurn {
+    return this._currentTurn;
+  }
+
+  public set currentTurn(turn : GameTurn) {
+    this.previousTurn = this._currentTurn;
+    this._currentTurn = turn;
+  }
+
+  getTimeFromTurn(turn: GameTurn) : GameTime{
+    if (turn in [
       GameTurn.Wolf,
       GameTurn.Fortuneteller,
       GameTurn.Witch,
