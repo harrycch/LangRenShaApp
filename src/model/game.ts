@@ -369,6 +369,8 @@ export class Game {
       }
     }
 
+    this.deadIdsThisNight.sort((a,b)=> a-b);
+
     this.killedPlayer = undefined;
     this.checkedPlayer = undefined;
     this.potionedPlayer = undefined;
