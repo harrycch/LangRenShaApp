@@ -70,6 +70,10 @@ export class Game {
     return Game.instance;
   }
 
+  static hasInstance() : boolean{
+    return !!Game.instance;
+  }
+
   static destroyInstance(){
     Game.instance = null;
   }
