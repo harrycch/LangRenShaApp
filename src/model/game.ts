@@ -158,6 +158,65 @@ export class Game {
     this.isPaused = false;
   }
 
+  isPlayerTargetable(player : Player) : boolean{
+    switch (this.currentTurn){
+      case GameTurn.Wolf:
+      if (!player.isAlive) {
+        return false;
+      }
+      break;
+
+      case GameTurn.Fortuneteller:
+      if (!player.isAlive) {
+        return false;
+      }
+      if (!(player.card instanceof FortunetellerCard)) {
+        return false;
+      }
+      break;
+
+      case GameTurn.Witch:
+      if (!player.isAlive) {
+        return false;
+      }
+      if (this.getPlayersByCard(CardType.Witch).length > 0) {
+        let witch : Player = this.getPlayersByCard(CardType.Witch)[0];
+        let witchCard : WitchCard = witch.card as WitchCard;
+        if (this.potionedPlayer == undefined) {
+          if (player.card instanceof WitchCard && !this.isInitialRound) {
+            return false;
+          }
+          if (!witch.isAlive) {
+            return false;
+          }
+          if (witchCard.isPotionUsed) {
+            return false;
+          }
+        }
+      }else{
+        return false;
+      }
+      break;
+
+      case GameTurn.Hunter:
+      return false;
+
+      case GameTurn.PoliceElection:
+      break;
+
+      case GameTurn.Vote:
+      if (!player.isAlive) {
+        return false;
+      }
+      break;
+
+      default:
+      break;
+    }
+
+    return true;
+  }
+
   proceed(targetId? : number){
     if (this.isEnded) {
       return;

@@ -58,26 +58,38 @@ export class GameMessage {
 	        break;
 	      
 	      case GameTurn.Witch:
-	        if(game.potionedPlayer == undefined){
-	          let witch : Player = game.getPlayersByCard(CardType.Witch)[0];
-	          let witchCard : WitchCard = witch.card as WitchCard;
-	          if (witchCard.isPotionUsed) {
-	            msgObj.command =  'command_witch_potion_used';
-	          }else {
-	            if (game.killedPlayer instanceof Player) {
-	              msgObj.command = 'command_witch_potion';
-	              msgObj.params['id'] = game.killedPlayer.id;
-	              msgObj.negativeBtn = 'btn_witch_potion_negative';
-	            }else{
-	              msgObj.command = 'command_witch_potion_none';
-	            }
-	          }
-	        }else if(game.poisonedPlayer == undefined) {
-	          msgObj.command = 'command_witch_poison';
-	          msgObj.negativeBtn = 'btn_witch_poison_negative';
-	        }else{
-	          msgObj.command = 'command_witch_poison_end';
-	        }
+	      	if (game.getPlayersByCard(CardType.Witch).length > 0) {
+	      		let witch : Player = game.getPlayersByCard(CardType.Witch)[0];
+		        let witchCard : WitchCard = witch.card as WitchCard;
+		        if(game.potionedPlayer == undefined){
+		        	if (!witch.isAlive) {
+		        		msgObj.command = 'command_witch_potion_dead';
+		        	}else if (witchCard.isPotionUsed) {
+		            msgObj.command =  'command_witch_potion_used';
+		          }else {
+		            if (game.killedPlayer instanceof Player) {
+		              msgObj.command = 'command_witch_potion';
+		              msgObj.params['id'] = game.killedPlayer.id;
+		              msgObj.negativeBtn = 'btn_witch_potion_negative';
+		            }else{
+		              msgObj.command = 'command_witch_potion_none';
+		            }
+		          }
+		        }else if(game.poisonedPlayer == undefined) {
+		        	if(!witch.isAlive){
+		        		msgObj.command = 'command_witch_poison_dead';
+		        	}else if (witchCard.isPoisonUsed) {
+		        		msgObj.command = 'command_witch_poison_used';	
+		        	}else{
+		        		msgObj.command = 'command_witch_poison';
+		          	msgObj.negativeBtn = 'btn_witch_poison_negative';
+		        	}
+		        }else{
+		          msgObj.command = 'command_witch_poison_end';
+		        }
+	      	}else{
+	      		msgObj.command = 'command_no_witch';
+	      	}
 	        break;
 	      
 	      case GameTurn.Hunter:

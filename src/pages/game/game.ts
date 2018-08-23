@@ -99,7 +99,7 @@ export class GamePage {
   }
 
   onClickCard(event, player: Player){
-    if (this.gameMessage.negativeBtn != '' && player.isAlive) {
+    if (this.gameMessage.negativeBtn != '' && this.game.isPlayerTargetable(player)) {
       this.game.proceed(player.id);
       this.refreshMessages();
     }
