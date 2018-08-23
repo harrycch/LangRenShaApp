@@ -41,9 +41,14 @@ export class GameMessage {
 	        break;
 
 	      case GameTurn.Fortuneteller:
+	      	let fortuneteller : Player = game.getPlayersByCard(CardType.Fortuneteller)[0];
 	        if(game.checkedPlayer == undefined){
-	          msgObj.command = 'command_fortuneteller_check';
-	          msgObj.negativeBtn = 'btn_fortuneteller_check_negative';
+	        	if (!fortuneteller.isAlive) {
+	        		msgObj.command = 'command_fortuneteller_check_dead';
+	        	}else {
+	          	msgObj.command = 'command_fortuneteller_check';
+	          	msgObj.negativeBtn = 'btn_fortuneteller_check_negative';
+	        	}
 	        }else {
 	          if (game.checkedPlayer instanceof Player) {
 	            if(game.checkedPlayer.card.team != Team.Wolf){

@@ -167,10 +167,14 @@ export class Game {
       break;
 
       case GameTurn.Fortuneteller:
+      let fortuneteller : Player = this.getPlayersByCard(CardType.Fortuneteller)[0];
+      if (!fortuneteller.isAlive) {
+        return false;
+      }
       if (!player.isAlive) {
         return false;
       }
-      if (!(player.card instanceof FortunetellerCard)) {
+      if (player.card instanceof FortunetellerCard) {
         return false;
       }
       break;

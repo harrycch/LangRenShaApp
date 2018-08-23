@@ -28,6 +28,7 @@
   "command_wolf_kill_end" : "狼人请闭眼。",
   "btn_wolf_kill_negative" : "空刀",
   "command_fortuneteller_check" : "预言家请开眼，选择查几号玩家？",
+  "command_fortuneteller_check_dead" : "预言家请开眼，选择查几号玩家？﹙预言家已死﹚",
   "btn_fortuneteller_check_negative" : "不查",
   "command_fortuneteller_check_good" : "他的身份是﹙好﹚。预言家请闭眼。",
   "command_fortuneteller_check_bad" : "他的身份是﹙坏﹚。预言家请闭眼。",
