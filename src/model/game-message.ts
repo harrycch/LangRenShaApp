@@ -102,7 +102,7 @@ export class GameMessage {
 	          if (game.poisonedPlayer instanceof Player) {
 	            let hunter : Player = game.getPlayersByCard(CardType.Hunter)[0];
 	            if (game.poisonedPlayer.id == hunter.id) { 
-	              msgObj.command = 'command_hunter_poison_no';
+	              msgObj.command = 'command_hunter_poison_yes';
 	            } else {
 	              msgObj.command = 'command_hunter_poison_no';
 	            }
