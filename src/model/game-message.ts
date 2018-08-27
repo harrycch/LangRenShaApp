@@ -166,6 +166,20 @@ export class GameMessage {
 	          }
 	        }
 	        break;
+
+	      case GameTurn.Hunter_Vote_Shoot:
+	      	if (game.shootedPlayer == undefined) {
+	          msgObj.command = 'command_hunter_shoot';
+	          msgObj.negativeBtn = 'btn_hunter_shoot_negative';
+	        }else{
+	          if (game.shootedPlayer instanceof Player) {
+	          	msgObj.announcement = 'command_hunter_shoot_done';
+	          	msgObj.params['id'] = game.shootedPlayer.id;
+	          }else{
+	          	msgObj.announcement = 'command_hunter_shoot_none';
+	          }
+	        }
+	      	break;
 	      
 	      default:
 	        break;

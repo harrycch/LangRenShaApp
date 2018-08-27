@@ -10,7 +10,8 @@ export enum GameTurn {
 	Hunter,
 	Stupid,
 	PoliceElection,
-	Vote
+	Vote,
+  Hunter_Vote_Shoot
 };
 
 export enum GameTime{
@@ -38,6 +39,7 @@ export class Game {
   public potionedPlayer? : Player | boolean;
   public poisonedPlayer? : Player | boolean;
   public votedPlayer? : Player | boolean;
+  public shootedPlayer? : Player | boolean;
   public isHunterNotified : boolean = false;
   public deadIdsThisNight : number[] = []
 
@@ -327,6 +329,30 @@ export class Game {
             this.votedPlayer = false;
           }
         }else {
+          if (this.votedPlayer instanceof Player && this.votedPlayer.card.type == CardType.Hunter) {
+            this.currentTurn = GameTurn.Hunter_Vote_Shoot;
+            this.processAndClearTargets();
+          }else{
+            this.processAndClearTargets();
+            this.checkEndGame();
+            if(!this.isEnded){
+              // To next round
+              this.currentRound += 1;
+              this.currentTurn = GameTurn.Wolf;
+              this.deadIdsThisNight = [];
+            }
+          }
+        }
+        break;
+
+      case GameTurn.Hunter_Vote_Shoot:
+        if (this.shootedPlayer == undefined) {
+          if (targetId != undefined) {
+            this.shootedPlayer = this.getAlivePlayerById(targetId);
+          }else{
+            this.shootedPlayer = false;
+          }
+        }else{
           this.processAndClearTargets();
           this.checkEndGame();
           if(!this.isEnded){
@@ -336,7 +362,7 @@ export class Game {
             this.deadIdsThisNight = [];
           }
         }
-        break;
+      break;
   		
       default:
   			break;
@@ -383,6 +409,10 @@ export class Game {
       }
     }
 
+    if (this.shootedPlayer instanceof Player) {
+      this.shootedPlayer.isAlive = false;
+    }
+
     this.deadIdsThisNight.sort((a,b)=> a-b);
 
     this.killedPlayer = undefined;
@@ -390,6 +420,7 @@ export class Game {
     this.potionedPlayer = undefined;
     this.poisonedPlayer = undefined;
     this.votedPlayer = undefined;
+    this.shootedPlayer = undefined;
     this.isHunterNotified = false;
   }
 
