@@ -70,6 +70,14 @@ export class Game {
     return Game.instance;
   }
 
+  static hasInstance() : boolean{
+    return !!Game.instance;
+  }
+
+  static destroyInstance(){
+    Game.instance = null;
+  }
+
   public get isInitialRound() : boolean {
     return (this.currentRound == 1);
   }
@@ -152,6 +160,69 @@ export class Game {
 
   continue(){
     this.isPaused = false;
+  }
+
+  isPlayerTargetable(player : Player) : boolean{
+    switch (this.currentTurn){
+      case GameTurn.Wolf:
+      if (!player.isAlive) {
+        return false;
+      }
+      break;
+
+      case GameTurn.Fortuneteller:
+      let fortuneteller : Player = this.getPlayersByCard(CardType.Fortuneteller)[0];
+      if (!fortuneteller.isAlive) {
+        return false;
+      }
+      if (!player.isAlive) {
+        return false;
+      }
+      if (player.card instanceof FortunetellerCard) {
+        return false;
+      }
+      break;
+
+      case GameTurn.Witch:
+      if (!player.isAlive) {
+        return false;
+      }
+      if (this.getPlayersByCard(CardType.Witch).length > 0) {
+        let witch : Player = this.getPlayersByCard(CardType.Witch)[0];
+        let witchCard : WitchCard = witch.card as WitchCard;
+        if (this.potionedPlayer == undefined) {
+          if (player.card instanceof WitchCard && !this.isInitialRound) {
+            return false;
+          }
+          if (!witch.isAlive) {
+            return false;
+          }
+          if (witchCard.isPotionUsed) {
+            return false;
+          }
+        }
+      }else{
+        return false;
+      }
+      break;
+
+      case GameTurn.Hunter:
+      return false;
+
+      case GameTurn.PoliceElection:
+      break;
+
+      case GameTurn.Vote:
+      if (!player.isAlive) {
+        return false;
+      }
+      break;
+
+      default:
+      break;
+    }
+
+    return true;
   }
 
   proceed(targetId? : number){
@@ -301,6 +372,8 @@ export class Game {
         this.votedPlayer.isAlive = false;
       }
     }
+
+    this.deadIdsThisNight.sort((a,b)=> a-b);
 
     this.killedPlayer = undefined;
     this.checkedPlayer = undefined;

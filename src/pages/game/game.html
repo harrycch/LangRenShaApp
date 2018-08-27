@@ -23,7 +23,7 @@
   <ion-grid>
   <ion-row class="card-background-page">
     <ion-col col-3 *ngFor="let player of game.playerList">
-      <ion-card (click)="onClickCard($event, player.id)">
+      <ion-card (click)="onClickCard($event, player)">
         <img class="card-image" src="assets/imgs/{{player.card.imgPath}}"/>
         <div class="card-title">{{ player.id }}</div>
         <div class="card-subtitle">({{ (player.isAlive ? 'player_alive' : 'player_dead') | translate }})</div>
@@ -31,10 +31,13 @@
     </ion-col>
   </ion-row>
   <ion-row (click)="onClickProceed($event)">
-    <ion-col>
-      <p *ngIf="(currentTimeMsg!='')">{{ currentTimeMsg | translate }}</p>
-      <p *ngIf="(currentAnnouncementMsg!='')">{{ currentAnnouncementMsg | translate:currentMsgParams}}</p>
-      <p *ngIf="(currentCommandMsg!='')">{{ currentCommandMsg | translate:currentMsgParams }}</p>
+    <ion-col col-12>
+      <p *ngIf="(gameMessage.time!='')">{{ gameMessage.time | translate }}</p>
+      <p *ngIf="(gameMessage.announcement!='')">{{ gameMessage.announcement | translate:gameMessage.params}}</p>
+      <p *ngIf="(gameMessage.command!='')">{{ gameMessage.command | translate:gameMessage.params }}</p>
+    </ion-col>
+    <ion-col col-12>
+      <button ion-button color="default" (click)="onClickNegativeBtn($event)" *ngIf="(gameMessage.negativeBtn!='')">{{ gameMessage.negativeBtn | translate }}</button>
     </ion-col>
   </ion-row>
 </ion-grid>

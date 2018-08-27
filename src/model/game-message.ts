@@ -8,6 +8,7 @@ export class GameMessage {
 	public command : string = '';
 	public announcement : string = '';
 	public params : object = {};
+	public negativeBtn : string = '';
 
   private constructor() {
   }
@@ -33,14 +34,21 @@ export class GameMessage {
 	      case GameTurn.Wolf:
 	        if(game.killedPlayer == undefined){
 	          msgObj.command = 'command_wolf_kill';
+	          msgObj.negativeBtn = 'btn_wolf_kill_negative';
 	        }else {
 	          msgObj.command = 'command_wolf_kill_end';
 	        }
 	        break;
 
 	      case GameTurn.Fortuneteller:
+	      	let fortuneteller : Player = game.getPlayersByCard(CardType.Fortuneteller)[0];
 	        if(game.checkedPlayer == undefined){
-	          msgObj.command = 'command_fortuneteller_check';
+	        	if (!fortuneteller.isAlive) {
+	        		msgObj.command = 'command_fortuneteller_check_dead';
+	        	}else {
+	          	msgObj.command = 'command_fortuneteller_check';
+	          	msgObj.negativeBtn = 'btn_fortuneteller_check_negative';
+	        	}
 	        }else {
 	          if (game.checkedPlayer instanceof Player) {
 	            if(game.checkedPlayer.card.team != Team.Wolf){
@@ -55,24 +63,38 @@ export class GameMessage {
 	        break;
 	      
 	      case GameTurn.Witch:
-	        if(game.potionedPlayer == undefined){
-	          let witch : Player = game.getPlayersByCard(CardType.Witch)[0];
-	          let witchCard : WitchCard = witch.card as WitchCard;
-	          if (witchCard.isPotionUsed) {
-	            msgObj.command =  'command_witch_potion_used';
-	          }else {
-	            if (game.killedPlayer instanceof Player) {
-	              msgObj.command = 'command_witch_potion';
-	              msgObj.params['id'] = game.killedPlayer.id;
-	            }else{
-	              msgObj.command = 'command_witch_potion_none';
-	            }
-	          }
-	        }else if(game.poisonedPlayer == undefined) {
-	          msgObj.command = 'command_witch_poison';
-	        }else{
-	          msgObj.command = 'command_witch_poison_end';
-	        }
+	      	if (game.getPlayersByCard(CardType.Witch).length > 0) {
+	      		let witch : Player = game.getPlayersByCard(CardType.Witch)[0];
+		        let witchCard : WitchCard = witch.card as WitchCard;
+		        if(game.potionedPlayer == undefined){
+		        	if (!witch.isAlive) {
+		        		msgObj.command = 'command_witch_potion_dead';
+		        	}else if (witchCard.isPotionUsed) {
+		            msgObj.command =  'command_witch_potion_used';
+		          }else {
+		            if (game.killedPlayer instanceof Player) {
+		              msgObj.command = 'command_witch_potion';
+		              msgObj.params['id'] = game.killedPlayer.id;
+		              msgObj.negativeBtn = 'btn_witch_potion_negative';
+		            }else{
+		              msgObj.command = 'command_witch_potion_none';
+		            }
+		          }
+		        }else if(game.poisonedPlayer == undefined) {
+		        	if(!witch.isAlive){
+		        		msgObj.command = 'command_witch_poison_dead';
+		        	}else if (witchCard.isPoisonUsed) {
+		        		msgObj.command = 'command_witch_poison_used';	
+		        	}else{
+		        		msgObj.command = 'command_witch_poison';
+		          	msgObj.negativeBtn = 'btn_witch_poison_negative';
+		        	}
+		        }else{
+		          msgObj.command = 'command_witch_poison_end';
+		        }
+	      	}else{
+	      		msgObj.command = 'command_no_witch';
+	      	}
 	        break;
 	      
 	      case GameTurn.Hunter:
@@ -80,7 +102,7 @@ export class GameMessage {
 	          if (game.poisonedPlayer instanceof Player) {
 	            let hunter : Player = game.getPlayersByCard(CardType.Hunter)[0];
 	            if (game.poisonedPlayer.id == hunter.id) { 
-	              msgObj.command = 'command_hunter_poison_no';
+	              msgObj.command = 'command_hunter_poison_yes';
 	            } else {
 	              msgObj.command = 'command_hunter_poison_no';
 	            }
@@ -95,6 +117,7 @@ export class GameMessage {
 	      case GameTurn.PoliceElection:
 	        if(game.policePlayer == undefined){
 	          msgObj.command = 'command_police_election';
+	          msgObj.negativeBtn = 'btn_police_election_negative';
 	        }else{
 	          msgObj.command = 'command_police_election_end';
 	          if (game.policePlayer instanceof Player) {
@@ -128,6 +151,7 @@ export class GameMessage {
 	              msgObj.command = 'command_vote_with_police_ndead'; // include case for 0 death
 	            }
 	          }
+	          msgObj.negativeBtn = 'btn_vote_negative';
 	        }else {
 	          if (game.votedPlayer instanceof Player) {
 	            msgObj.command = 'command_vote_end';
