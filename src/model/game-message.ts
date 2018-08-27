@@ -85,6 +85,8 @@ export class GameMessage {
 		        		msgObj.command = 'command_witch_poison_dead';
 		        	}else if (witchCard.isPoisonUsed) {
 		        		msgObj.command = 'command_witch_poison_used';	
+		        	}else if (game.potionedPlayer instanceof Player){
+		        		msgObj.command = 'command_witch_poison_same_round';
 		        	}else{
 		        		msgObj.command = 'command_witch_poison';
 		          	msgObj.negativeBtn = 'btn_witch_poison_negative';

@@ -200,6 +200,16 @@ export class Game {
           if (witchCard.isPotionUsed) {
             return false;
           }
+        }else if(this.poisonedPlayer == undefined){
+          if (!witch.isAlive) {
+            return false;
+          }
+          if (witchCard.isPoisonUsed) {
+            return false;
+          }
+          if (this.potionedPlayer instanceof Player) {
+            return false;
+          }
         }
       }else{
         return false;
