@@ -133,12 +133,14 @@ export class GameMessage {
 	      
 	      case GameTurn.Vote:
 	        if(game.votedPlayer == undefined){
-	        	if (game.numOfDeadThisNight > 0) { 
-	        		msgObj.announcement = 'command_announce_dead';
-	            msgObj.params['ids'] = game.deadIdsThisNight;
-	          }else{
-	          	msgObj.announcement = 'command_announce_no_dead';
-	          }
+	        	if (game.previousTurn != GameTurn.Hunter_Kill_Shoot) {
+	        		if (game.numOfDeadThisNight > 0) { 
+		        		msgObj.announcement = 'command_announce_dead';
+		            msgObj.params['ids'] = game.deadIdsThisNight;
+		          }else{
+		          	msgObj.announcement = 'command_announce_no_dead';
+		          }	
+	        	}
 
 	          if (game.policePlayer == false) {
 	            msgObj.command = 'command_vote_without_police';
@@ -166,6 +168,22 @@ export class GameMessage {
 	          }
 	        }
 	        break;
+
+	      case GameTurn.Hunter_Kill_Shoot:
+	      	if (game.shootedPlayer == undefined) {
+	      		msgObj.announcement = 'command_announce_dead';
+	      		msgObj.params['ids'] = game.deadIdsThisNight;
+	          msgObj.command = 'command_hunter_shoot';
+	          msgObj.negativeBtn = 'btn_hunter_shoot_negative';
+	        }else{
+	          if (game.shootedPlayer instanceof Player) {
+	          	msgObj.announcement = 'command_hunter_shoot_done';
+	          	msgObj.params['id'] = game.shootedPlayer.id;
+	          }else{
+	          	msgObj.announcement = 'command_hunter_shoot_none';
+	          }
+	        }
+	      	break;
 
 	      case GameTurn.Hunter_Vote_Shoot:
 	      	if (game.shootedPlayer == undefined) {

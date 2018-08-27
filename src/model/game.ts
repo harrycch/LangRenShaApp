@@ -11,6 +11,7 @@ export enum GameTurn {
 	Stupid,
 	PoliceElection,
 	Vote,
+  Hunter_Kill_Shoot,
   Hunter_Vote_Shoot
 };
 
@@ -298,10 +299,17 @@ export class Game {
           if(this.isInitialRound){
             this.currentTurn = GameTurn.PoliceElection;
           }else{
-            this.processAndClearTargets();
-            this.checkEndGame();
-            if(!this.isEnded){
-              this.currentTurn = GameTurn.Vote;  
+            if (this.killedPlayer instanceof Player 
+              && !(this.potionedPlayer instanceof Player && this.potionedPlayer.id == this.killedPlayer.id)
+              && this.killedPlayer.card.type == CardType.Hunter) {
+              this.currentTurn = GameTurn.Hunter_Kill_Shoot;
+              this.processAndClearTargets();
+            }else{
+              this.processAndClearTargets();
+              this.checkEndGame();
+              if(!this.isEnded){
+                this.currentTurn = GameTurn.Vote;  
+              }
             }
           }
         }
@@ -315,9 +323,18 @@ export class Game {
             this.policePlayer = false;
           }
         }else {
-          this.processAndClearTargets();
-          this.checkEndGame();
-          this.currentTurn = GameTurn.Vote;
+          if (this.killedPlayer instanceof Player 
+            && !(this.potionedPlayer instanceof Player && this.potionedPlayer.id == this.killedPlayer.id)
+            && this.killedPlayer.card.type == CardType.Hunter) {
+            this.currentTurn = GameTurn.Hunter_Kill_Shoot;
+            this.processAndClearTargets();
+          }else{
+            this.processAndClearTargets();
+            this.checkEndGame();
+            if(!this.isEnded){
+              this.currentTurn = GameTurn.Vote;  
+            }
+          }
         }
         break;
       
@@ -341,6 +358,22 @@ export class Game {
               this.currentTurn = GameTurn.Wolf;
               this.deadIdsThisNight = [];
             }
+          }
+        }
+        break;
+
+      case GameTurn.Hunter_Kill_Shoot:
+        if (this.shootedPlayer == undefined) {
+          if (targetId != undefined) {
+            this.shootedPlayer = this.getAlivePlayerById(targetId);
+          }else{
+            this.shootedPlayer = false;
+          }
+        }else{
+          this.processAndClearTargets();
+          this.checkEndGame();
+          if(!this.isEnded){
+            this.currentTurn = GameTurn.Vote;  
           }
         }
         break;
