@@ -9,6 +9,7 @@ export class GameMessage {
 	public announcement : string = '';
 	public params : object = {};
 	public negativeBtn : string = '';
+	public canBurst : boolean = false;
 
   private constructor() {
   }
@@ -85,6 +86,8 @@ export class GameMessage {
 		        		msgObj.command = 'command_witch_poison_dead';
 		        	}else if (witchCard.isPoisonUsed) {
 		        		msgObj.command = 'command_witch_poison_used';	
+		        	}else if (game.potionedPlayer instanceof Player){
+		        		msgObj.command = 'command_witch_poison_same_round';
 		        	}else{
 		        		msgObj.command = 'command_witch_poison';
 		          	msgObj.negativeBtn = 'btn_witch_poison_negative';
@@ -118,6 +121,7 @@ export class GameMessage {
 	        if(game.policePlayer == undefined){
 	          msgObj.command = 'command_police_election';
 	          msgObj.negativeBtn = 'btn_police_election_negative';
+	          msgObj.canBurst = true;
 	        }else{
 	          msgObj.command = 'command_police_election_end';
 	          if (game.policePlayer instanceof Player) {
@@ -131,12 +135,16 @@ export class GameMessage {
 	      
 	      case GameTurn.Vote:
 	        if(game.votedPlayer == undefined){
-	        	if (game.numOfDeadThisNight > 0) { 
-	        		msgObj.announcement = 'command_announce_dead';
-	            msgObj.params['ids'] = game.deadIdsThisNight;
-	          }else{
-	          	msgObj.announcement = 'command_announce_no_dead';
-	          }
+	        	msgObj.canBurst = true;
+	        	
+	        	if (game.previousTurn != GameTurn.Hunter_Kill_Shoot) {
+	        		if (game.numOfDeadThisNight > 0) { 
+		        		msgObj.announcement = 'command_announce_dead';
+		            msgObj.params['ids'] = game.deadIdsThisNight;
+		          }else{
+		          	msgObj.announcement = 'command_announce_no_dead';
+		          }	
+	        	}
 
 	          if (game.policePlayer == false) {
 	            msgObj.command = 'command_vote_without_police';
@@ -154,14 +162,57 @@ export class GameMessage {
 	          msgObj.negativeBtn = 'btn_vote_negative';
 	        }else {
 	          if (game.votedPlayer instanceof Player) {
-	            msgObj.command = 'command_vote_end';
+	            msgObj.announcement = 'command_vote_end';
 	            msgObj.params['id'] = game.votedPlayer.id;
+	            if (game.votedPlayer.card.type == CardType.Stupid) {
+	            	msgObj.command = 'command_stupid_show';
+	            }
 	          }else{
-	            msgObj.command = 'command_vote_end_none';
+	            msgObj.announcement = 'command_vote_end_none';
 	          }
 	        }
 	        break;
+
+	      case GameTurn.Hunter_Kill_Shoot:
+	      	if (game.shootedPlayer == undefined) {
+	      		msgObj.announcement = 'command_announce_dead';
+	      		msgObj.params['ids'] = game.deadIdsThisNight;
+	          msgObj.command = 'command_hunter_shoot';
+	          msgObj.negativeBtn = 'btn_hunter_shoot_negative';
+	        }else{
+	          if (game.shootedPlayer instanceof Player) {
+	          	msgObj.announcement = 'command_hunter_shoot_done';
+	          	msgObj.params['id'] = game.shootedPlayer.id;
+	          }else{
+	          	msgObj.announcement = 'command_hunter_shoot_none';
+	          }
+	        }
+	      	break;
+
+	      case GameTurn.Hunter_Vote_Shoot:
+	      	if (game.shootedPlayer == undefined) {
+	          msgObj.command = 'command_hunter_shoot';
+	          msgObj.negativeBtn = 'btn_hunter_shoot_negative';
+	        }else{
+	          if (game.shootedPlayer instanceof Player) {
+	          	msgObj.announcement = 'command_hunter_shoot_done';
+	          	msgObj.params['id'] = game.shootedPlayer.id;
+	          }else{
+	          	msgObj.announcement = 'command_hunter_shoot_none';
+	          }
+	        }
+	      	break;
 	      
+	      case GameTurn.Burst:
+	      	if (game.burstPlayer == undefined) {
+	      		msgObj.command = 'command_burst';
+	      		msgObj.negativeBtn = 'btn_burst_negative';
+	      	}else{
+	      		msgObj.announcement = 'announce_burst_done';
+	      		msgObj.params['id'] = game.burstPlayer.id;
+	      	}
+	      	break;
+
 	      default:
 	        break;
     	}

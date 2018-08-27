@@ -10,7 +10,10 @@ export enum GameTurn {
 	Hunter,
 	Stupid,
 	PoliceElection,
-	Vote
+	Vote,
+  Hunter_Kill_Shoot,
+  Hunter_Vote_Shoot,
+  Burst
 };
 
 export enum GameTime{
@@ -38,6 +41,8 @@ export class Game {
   public potionedPlayer? : Player | boolean;
   public poisonedPlayer? : Player | boolean;
   public votedPlayer? : Player | boolean;
+  public shootedPlayer? : Player | boolean;
+  public burstPlayer? : Player;
   public isHunterNotified : boolean = false;
   public deadIdsThisNight : number[] = []
 
@@ -200,6 +205,16 @@ export class Game {
           if (witchCard.isPotionUsed) {
             return false;
           }
+        }else if(this.poisonedPlayer == undefined){
+          if (!witch.isAlive) {
+            return false;
+          }
+          if (witchCard.isPoisonUsed) {
+            return false;
+          }
+          if (this.potionedPlayer instanceof Player) {
+            return false;
+          }
         }
       }else{
         return false;
@@ -214,6 +229,24 @@ export class Game {
 
       case GameTurn.Vote:
       if (!player.isAlive) {
+        return false;
+      }
+      break;
+
+      case GameTurn.Hunter_Kill_Shoot:
+      if (!player.isAlive) {
+        return false;
+      }
+      break;
+
+      case GameTurn.Hunter_Vote_Shoot:
+      if (!player.isAlive) {
+        return false;
+      }
+      break;
+
+      case GameTurn.Burst:
+      if (!(player.card.type == CardType.Wolf && player.isAlive)) {
         return false;
       }
       break;
@@ -283,13 +316,20 @@ export class Game {
         if(!this.isHunterNotified){
           this.isHunterNotified = true;
         }else {
-          if(this.isInitialRound){
+          if(this.policePlayer == undefined){
             this.currentTurn = GameTurn.PoliceElection;
           }else{
-            this.processAndClearTargets();
-            this.checkEndGame();
-            if(!this.isEnded){
-              this.currentTurn = GameTurn.Vote;  
+            if (this.killedPlayer instanceof Player 
+              && !(this.potionedPlayer instanceof Player && this.potionedPlayer.id == this.killedPlayer.id)
+              && this.killedPlayer.card.type == CardType.Hunter) {
+              this.currentTurn = GameTurn.Hunter_Kill_Shoot;
+              this.processAndClearTargets();
+            }else{
+              this.processAndClearTargets();
+              this.checkEndGame();
+              if(!this.isEnded){
+                this.currentTurn = GameTurn.Vote;  
+              }
             }
           }
         }
@@ -303,9 +343,18 @@ export class Game {
             this.policePlayer = false;
           }
         }else {
-          this.processAndClearTargets();
-          this.checkEndGame();
-          this.currentTurn = GameTurn.Vote;
+          if (this.killedPlayer instanceof Player 
+            && !(this.potionedPlayer instanceof Player && this.potionedPlayer.id == this.killedPlayer.id)
+            && this.killedPlayer.card.type == CardType.Hunter) {
+            this.currentTurn = GameTurn.Hunter_Kill_Shoot;
+            this.processAndClearTargets();
+          }else{
+            this.processAndClearTargets();
+            this.checkEndGame();
+            if(!this.isEnded){
+              this.currentTurn = GameTurn.Vote;  
+            }
+          }
         }
         break;
       
@@ -317,6 +366,65 @@ export class Game {
             this.votedPlayer = false;
           }
         }else {
+          if (this.votedPlayer instanceof Player && this.votedPlayer.card.type == CardType.Hunter) {
+            this.currentTurn = GameTurn.Hunter_Vote_Shoot;
+            this.processAndClearTargets();
+          }else{
+            this.processAndClearTargets();
+            this.checkEndGame();
+            if(!this.isEnded){
+              // To next round
+              this.currentRound += 1;
+              this.currentTurn = GameTurn.Wolf;
+              this.deadIdsThisNight = [];
+            }
+          }
+        }
+        break;
+
+      case GameTurn.Hunter_Kill_Shoot:
+        if (this.shootedPlayer == undefined) {
+          if (targetId != undefined) {
+            this.shootedPlayer = this.getAlivePlayerById(targetId);
+          }else{
+            this.shootedPlayer = false;
+          }
+        }else{
+          this.processAndClearTargets();
+          this.checkEndGame();
+          if(!this.isEnded){
+            this.currentTurn = GameTurn.Vote;  
+          }
+        }
+        break;
+
+      case GameTurn.Hunter_Vote_Shoot:
+        if (this.shootedPlayer == undefined) {
+          if (targetId != undefined) {
+            this.shootedPlayer = this.getAlivePlayerById(targetId);
+          }else{
+            this.shootedPlayer = false;
+          }
+        }else{
+          this.processAndClearTargets();
+          this.checkEndGame();
+          if(!this.isEnded){
+            // To next round
+            this.currentRound += 1;
+            this.currentTurn = GameTurn.Wolf;
+            this.deadIdsThisNight = [];
+          }
+        }
+      break;
+
+      case GameTurn.Burst:
+        if (this.burstPlayer == undefined) {
+          if (targetId != undefined) {
+            this.burstPlayer = this.getAlivePlayerById(targetId);
+          }else{
+            this.currentTurn = this.previousTurn;
+          }
+        }else{
           this.processAndClearTargets();
           this.checkEndGame();
           if(!this.isEnded){
@@ -335,6 +443,10 @@ export class Game {
     if (!this.isEnded) {
       this.skipUnusedCards();
     }
+  }
+
+  proceedWithBurst(){
+    this.currentTurn = GameTurn.Burst;
   }
 
   skipUnusedCards(){
@@ -366,11 +478,19 @@ export class Game {
     }
 
     if(this.votedPlayer instanceof Player){
-      if(this.votedPlayer.card.type == CardType.Stupid){
+      if(this.votedPlayer.card.type == CardType.Stupid && !(this.votedPlayer.card as StupidCard).isShowedUp){
         (this.votedPlayer.card as StupidCard).isShowedUp = true;
       }else{
         this.votedPlayer.isAlive = false;
       }
+    }
+
+    if (this.shootedPlayer instanceof Player) {
+      this.shootedPlayer.isAlive = false;
+    }
+
+    if (this.burstPlayer != undefined) {
+      this.burstPlayer.isAlive = false;
     }
 
     this.deadIdsThisNight.sort((a,b)=> a-b);
@@ -380,6 +500,8 @@ export class Game {
     this.potionedPlayer = undefined;
     this.poisonedPlayer = undefined;
     this.votedPlayer = undefined;
+    this.shootedPlayer = undefined;
+    this.burstPlayer = undefined;
     this.isHunterNotified = false;
   }
 
