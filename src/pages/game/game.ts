@@ -110,6 +110,13 @@ export class GamePage {
     this.refreshMessages();
   }
 
+  onClickBurstBtn(event){
+    if (this.gameMessage.canBurst) {
+      this.game.proceedWithBurst();
+      this.refreshMessages();
+    }
+  }
+
   refreshMessages(){
     this.gameMessage = GameMessage.generate(this.game, this.translate);
   }

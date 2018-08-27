@@ -70,6 +70,10 @@
   "command_stupid_show" : "﹙白痴可以翻开自己的身份牌，免疫此次放逐。﹚",
   "command_dying_message" : "{{ids}}号玩家请留遗言。",
   "command_end_game" : "游戏结束，{{team}}获胜。",
+  "btn_burst": "自爆",
+  "btn_burst_negative": "取消自爆",
+  "command_burst": "﹙请法官点选要自爆的玩家﹚",
+  "announce_burst_done": "{{id}}号玩家自爆，立即进入黑夜。",
 
   "page_home_title" : "玩狼人杀",
   "page_home_h3" : "开始玩狼人杀",

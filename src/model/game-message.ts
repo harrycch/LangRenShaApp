@@ -9,6 +9,7 @@ export class GameMessage {
 	public announcement : string = '';
 	public params : object = {};
 	public negativeBtn : string = '';
+	public canBurst : boolean = false;
 
   private constructor() {
   }
@@ -120,6 +121,7 @@ export class GameMessage {
 	        if(game.policePlayer == undefined){
 	          msgObj.command = 'command_police_election';
 	          msgObj.negativeBtn = 'btn_police_election_negative';
+	          msgObj.canBurst = true;
 	        }else{
 	          msgObj.command = 'command_police_election_end';
 	          if (game.policePlayer instanceof Player) {
@@ -133,6 +135,8 @@ export class GameMessage {
 	      
 	      case GameTurn.Vote:
 	        if(game.votedPlayer == undefined){
+	        	msgObj.canBurst = true;
+	        	
 	        	if (game.previousTurn != GameTurn.Hunter_Kill_Shoot) {
 	        		if (game.numOfDeadThisNight > 0) { 
 		        		msgObj.announcement = 'command_announce_dead';
@@ -199,6 +203,16 @@ export class GameMessage {
 	        }
 	      	break;
 	      
+	      case GameTurn.Burst:
+	      	if (game.burstPlayer == undefined) {
+	      		msgObj.command = 'command_burst';
+	      		msgObj.negativeBtn = 'btn_burst_negative';
+	      	}else{
+	      		msgObj.announcement = 'announce_burst_done';
+	      		msgObj.params['id'] = game.burstPlayer.id;
+	      	}
+	      	break;
+
 	      default:
 	        break;
     	}

@@ -38,6 +38,7 @@
     </ion-col>
     <ion-col col-12>
       <button ion-button color="default" (click)="onClickNegativeBtn($event)" *ngIf="(gameMessage.negativeBtn!='')">{{ gameMessage.negativeBtn | translate }}</button>
+      <button ion-button color="danger" (click)="onClickBurstBtn($event)" *ngIf="gameMessage.canBurst">{{ "btn_burst" | translate }}</button>
     </ion-col>
   </ion-row>
 </ion-grid>
