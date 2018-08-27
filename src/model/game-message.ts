@@ -156,10 +156,13 @@ export class GameMessage {
 	          msgObj.negativeBtn = 'btn_vote_negative';
 	        }else {
 	          if (game.votedPlayer instanceof Player) {
-	            msgObj.command = 'command_vote_end';
+	            msgObj.announcement = 'command_vote_end';
 	            msgObj.params['id'] = game.votedPlayer.id;
+	            if (game.votedPlayer.card.type == CardType.Stupid) {
+	            	msgObj.command = 'command_stupid_show';
+	            }
 	          }else{
-	            msgObj.command = 'command_vote_end_none';
+	            msgObj.announcement = 'command_vote_end_none';
 	          }
 	        }
 	        break;

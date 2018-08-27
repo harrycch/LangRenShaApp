@@ -376,7 +376,7 @@ export class Game {
     }
 
     if(this.votedPlayer instanceof Player){
-      if(this.votedPlayer.card.type == CardType.Stupid){
+      if(this.votedPlayer.card.type == CardType.Stupid && !(this.votedPlayer.card as StupidCard).isShowedUp){
         (this.votedPlayer.card as StupidCard).isShowedUp = true;
       }else{
         this.votedPlayer.isAlive = false;
