@@ -4,10 +4,15 @@ import {Card, CardType, Team,
 } from './card';
 
 export enum GameTurn { 
+  WolfChoose,
 	Wolf,
-	Fortuneteller,
+	FortunetellerChoose,
+  Fortuneteller,
+  WitchChoose,
 	Witch,
+  HunterChoose,
 	Hunter,
+  StupidChoose,
 	Stupid,
 	PoliceElection,
 	Vote,
@@ -31,8 +36,10 @@ export class Game {
 
 	private static instance: Game;
   public cardSet : Array<CardType> = Game.DEFAULT_CARD_SET;
-	public playerList : Array<Player> = [];
-	public currentRound : number;
+	public cardDistributed : boolean[] = [false,false,false,false,false,false,false,false,false,false,false,false];
+  public playerList : Array<Player> = [];
+	
+  public currentRound : number;
 	private _currentTurn : GameTurn;
   public previousTurn : GameTurn;
   public isStarted : boolean = false;
@@ -49,13 +56,14 @@ export class Game {
   public shootedPlayer? : Player | boolean;
   public burstPlayer? : Player;
   public isHunterNotified : boolean = false;
-  public deadIdsThisNight : number[] = []
+  public deadIdsThisNight : number[] = [];
 
   private constructor(private opts : object) {
     if (opts.hasOwnProperty('cardSet') && opts['cardSet'] instanceof Array && opts['cardSet'].length >= Game.MIN_PLAYER_COUNT) {
       this.cardSet = [];
       for (let i = 0; i < opts['cardSet'].length; i++) {
         this.cardSet.push(opts['cardSet'][i]);
+        this.cardDistributed.push(false);
       }
     }
 
@@ -65,6 +73,7 @@ export class Game {
       const shuffled = this.playerList.sort(() => .5 - Math.random());// shuffle  
       for (let i = 0; i < this.playerCount; i++) {
         shuffled[i].setNewCard(Card.createCard(this.cardSet[i]));
+        this.cardDistributed[i] = true;
       }
       this.playerList.sort((p1, p2) => p1.id-p2.id);
     }
@@ -122,12 +131,25 @@ export class Game {
     this._currentTurn = turn;
   }
 
+  isCardTypeAllDistributed(type : CardType) : boolean{
+    return this.cardSet.findIndex((c,i) => (!this.cardDistributed[i] && c==type)) == -1;
+  }
+
+  isAllCardDistributed() : boolean{
+    return this.cardSet.findIndex((c,i) => !this.cardDistributed[i]) == -1;
+  }
+
   getTimeFromTurn(turn: GameTurn) : GameTime{
     if (turn in [
+      GameTurn.WolfChoose,
       GameTurn.Wolf,
+      GameTurn.FortunetellerChoose,
       GameTurn.Fortuneteller,
+      GameTurn.WitchChoose,
       GameTurn.Witch,
+      GameTurn.HunterChoose,
       GameTurn.Hunter,
+      GameTurn.StupidChoose,
       GameTurn.Stupid
       ]) { 
       return GameTime.Night;
@@ -144,7 +166,7 @@ export class Game {
   }
 
   getPlayersByCard(cardType: CardType) : Array<Player>{
-    return this.playerList.filter(player => player.card.type === cardType);
+    return this.playerList.filter(player => (player.card instanceof Card && player.card.type === cardType));
   }
 
   getAlivePlayerById(id : number) : Player {
@@ -152,17 +174,22 @@ export class Game {
   }
 
   getAlivePlayersByCard(cardType: CardType) : Array<Player>{
-  	return this.alivePlayerList.filter(player => player.card.type === cardType);
+  	return this.alivePlayerList.filter(player => (player.card instanceof Card && player.card.type === cardType));
   }
 
   getAlivePlayersByTeam(team: Team) : Array<Player>{
-    return this.alivePlayerList.filter(player => player.card.team === team);
+    return this.alivePlayerList.filter(player => (player.card instanceof Card && player.card.team === team));
   }
 
   start(){
   	this.currentRound = 1;
-  	this.currentTurn = GameTurn.Wolf;
     this.isStarted = true;
+    
+    if (this.isAllCardDistributed()) {
+      this.currentTurn = GameTurn.Wolf;
+    }else{
+      this.currentTurn = GameTurn.WolfChoose;
+    }
   }
 
   pause(){
@@ -173,8 +200,53 @@ export class Game {
     this.isPaused = false;
   }
 
+  distributeCard(player: Player, type: CardType){
+    player.setNewCard(Card.createCard(type));
+    let index = this.cardSet.findIndex((c,i) => (!this.cardDistributed[i] && c==type));
+    this.cardDistributed[index] = true;
+  }
+
+  distributeRemainingAsVillager(){
+    for (var i = 0; i < this.playerList.length; i++) {
+      let player = this.playerList[i];
+      if (!(player.card instanceof Card)) {
+        this.distributeCard(player, CardType.Villager);
+      }
+    }
+  }
+
   isPlayerTargetable(player : Player) : boolean{
     switch (this.currentTurn){
+      case GameTurn.WolfChoose:
+      if (player.card instanceof Card) {
+        return false;
+      }
+      break;
+
+      case GameTurn.FortunetellerChoose:
+      if (player.card instanceof Card) {
+        return false;
+      }
+      break;
+
+      case GameTurn.WitchChoose:
+      if (player.card instanceof Card) {
+        return false;
+      }
+      break;
+
+      case GameTurn.HunterChoose:
+      if (player.card instanceof Card) {
+        return false;
+      }
+      break;
+
+      case GameTurn.StupidChoose:
+      if (player.card instanceof Card) {
+        return false;
+      }
+      break;
+
       case GameTurn.Wolf:
       if (!player.isAlive) {
         return false;
@@ -270,6 +342,12 @@ export class Game {
     }
 
   	switch (this.currentTurn) {
+      case GameTurn.WolfChoose:
+        this.distributeCard(this.getAlivePlayerById(targetId), CardType.Wolf);
+        if (this.isCardTypeAllDistributed(CardType.Wolf)) {
+          this.currentTurn = GameTurn.Wolf;
+        }
+        break;
   		
       case GameTurn.Wolf:
         if(this.killedPlayer == undefined){
@@ -279,9 +357,20 @@ export class Game {
             this.killedPlayer = false;
           }
         }else {
-          this.currentTurn = GameTurn.Fortuneteller;  
+          if (this.isCardTypeAllDistributed(CardType.Fortuneteller)) {
+            this.currentTurn = GameTurn.Fortuneteller;  
+          }else{
+            this.currentTurn = GameTurn.FortunetellerChoose;
+          }
         }
   			break;
+
+      case GameTurn.FortunetellerChoose:
+        this.distributeCard(this.getAlivePlayerById(targetId), CardType.Fortuneteller);
+        if (this.isCardTypeAllDistributed(CardType.Fortuneteller)) {
+          this.currentTurn = GameTurn.Fortuneteller;
+        }
+        break;
 
   		case GameTurn.Fortuneteller:
         if(this.checkedPlayer == undefined){
@@ -291,9 +380,20 @@ export class Game {
             this.checkedPlayer = false;  
           }
         }else {
-          this.currentTurn = GameTurn.Witch;
+          if (this.isCardTypeAllDistributed(CardType.Witch)) {
+            this.currentTurn = GameTurn.Witch;
+          }else{
+            this.currentTurn = GameTurn.WitchChoose;
+          }
         }
   			break;
+
+      case GameTurn.WitchChoose:
+        this.distributeCard(this.getAlivePlayerById(targetId), CardType.Witch);
+        if (this.isCardTypeAllDistributed(CardType.Witch)) {
+          this.currentTurn = GameTurn.Witch;
+        }
+        break;
   		
       case GameTurn.Witch:
         let witchCard : WitchCard = this.getPlayersByCard(CardType.Witch)[0].card as WitchCard;
@@ -314,16 +414,31 @@ export class Game {
             this.poisonedPlayer = false;
           }
         }else{
-          this.currentTurn = GameTurn.Hunter;
+          if (this.isCardTypeAllDistributed(CardType.Hunter)) {
+            this.currentTurn = GameTurn.Hunter;
+          }else{
+            this.currentTurn = GameTurn.HunterChoose;
+          }
         }
   			break;
+
+      case GameTurn.HunterChoose:
+        this.distributeCard(this.getAlivePlayerById(targetId), CardType.Hunter);
+        if (this.isCardTypeAllDistributed(CardType.Hunter)) {
+          this.currentTurn = GameTurn.Hunter;
+        }
+        break;
   		
       case GameTurn.Hunter:
         if(!this.isHunterNotified){
           this.isHunterNotified = true;
         }else {
           if(this.policePlayer == undefined){
-            this.currentTurn = GameTurn.PoliceElection;
+            if (this.isCardTypeAllDistributed(CardType.Stupid)) {
+              this.currentTurn = GameTurn.PoliceElection;
+            }else{
+              this.currentTurn = GameTurn.StupidChoose;
+            }
           }else{
             if (this.killedPlayer instanceof Player 
               && !(this.potionedPlayer instanceof Player && this.potionedPlayer.id == this.killedPlayer.id)
@@ -341,6 +456,14 @@ export class Game {
         }
   			break;
       
+      case GameTurn.StupidChoose:
+        this.distributeCard(this.getAlivePlayerById(targetId), CardType.Stupid);
+        if (this.isCardTypeAllDistributed(CardType.Stupid)) {
+          this.distributeRemainingAsVillager();
+          this.currentTurn = GameTurn.PoliceElection;
+        }
+        break;
+
       case GameTurn.PoliceElection:
         if(this.policePlayer == undefined){
           if(targetId != undefined){

@@ -24,7 +24,7 @@ export class GamePage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private alertCtrl: AlertController, private translate: TranslateService) {
     let opts = {
-      randomCards : true,
+      randomCards : false,
       cardSet: [
       CardType.Wolf,CardType.Wolf,CardType.Wolf,CardType.Wolf,
       CardType.Fortuneteller,CardType.Witch,CardType.Hunter,CardType.Stupid,
@@ -97,14 +97,14 @@ export class GamePage {
   }
 
   onClickProceed(event){
-    if (this.gameMessage.negativeBtn == '') {
+    if (!this.gameMessage.requireIdInput) {
       this.game.proceed();
       this.refreshMessages();
     }
   }
 
   onClickCard(event, player: Player){
-    if (this.gameMessage.negativeBtn != '' && this.game.isPlayerTargetable(player)) {
+    if (this.gameMessage.requireIdInput && this.game.isPlayerTargetable(player)) {
       this.game.proceed(player.id);
       this.refreshMessages();
     }

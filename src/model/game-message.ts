@@ -1,13 +1,14 @@
 import { TranslateService } from '@ngx-translate/core';
 import {Game, GameTime, GameTurn} from './game';
 import { Player } from './player';
-import { Team, CardType, WitchCard } from './card';
+import { Card, Team, CardType, WitchCard } from './card';
 
 export class GameMessage {
 	public time : string = '';
 	public command : string = '';
 	public announcement : string = '';
 	public params : object = {};
+	public requireIdInput : boolean = false;
 	public negativeBtn : string = '';
 	public canBurst : boolean = false;
 
@@ -32,9 +33,35 @@ export class GameMessage {
     	}
 
     	switch (game.currentTurn) {
+    		case GameTurn.WolfChoose:
+    			msgObj.requireIdInput = true;
+    			msgObj.command = 'command_choose_wolf';
+    			break;
+
+	      case GameTurn.FortunetellerChoose:
+	      	msgObj.requireIdInput = true;
+    			msgObj.command = 'command_choose_fortuneteller';
+    			break;
+
+    		case GameTurn.WitchChoose:
+	      	msgObj.requireIdInput = true;
+    			msgObj.command = 'command_choose_witch';
+    			break;
+
+    		case GameTurn.HunterChoose:
+	      	msgObj.requireIdInput = true;
+    			msgObj.command = 'command_choose_hunter';
+    			break;
+
+    		case GameTurn.StupidChoose:
+	      	msgObj.requireIdInput = true;
+    			msgObj.command = 'command_choose_stupid';
+    			break;
+
 	      case GameTurn.Wolf:
 	        if(game.killedPlayer == undefined){
 	          msgObj.command = 'command_wolf_kill';
+	        	msgObj.requireIdInput = true;
 	          msgObj.negativeBtn = 'btn_wolf_kill_negative';
 	        }else {
 	          msgObj.command = 'command_wolf_kill_end';
@@ -48,14 +75,15 @@ export class GameMessage {
 	        		msgObj.command = 'command_fortuneteller_check_dead';
 	        	}else {
 	          	msgObj.command = 'command_fortuneteller_check';
+	        		msgObj.requireIdInput = true;
 	          	msgObj.negativeBtn = 'btn_fortuneteller_check_negative';
 	        	}
 	        }else {
 	          if (game.checkedPlayer instanceof Player) {
-	            if(game.checkedPlayer.card.team != Team.Wolf){
-	              msgObj.command = 'command_fortuneteller_check_good'
-	            }else{
+	            if(game.checkedPlayer.card instanceof Card && game.checkedPlayer.card.team == Team.Wolf){
 	              msgObj.command = 'command_fortuneteller_check_bad';
+	            }else{
+	              msgObj.command = 'command_fortuneteller_check_good';
 	            }
 	          }else {
 	            msgObj.command = 'command_fortuneteller_check_none'
@@ -76,6 +104,7 @@ export class GameMessage {
 		            if (game.killedPlayer instanceof Player) {
 		              msgObj.command = 'command_witch_potion';
 		              msgObj.params['id'] = game.killedPlayer.id;
+		            	msgObj.requireIdInput = true;
 		              msgObj.negativeBtn = 'btn_witch_potion_negative';
 		            }else{
 		              msgObj.command = 'command_witch_potion_none';
@@ -90,6 +119,7 @@ export class GameMessage {
 		        		msgObj.command = 'command_witch_poison_same_round';
 		        	}else{
 		        		msgObj.command = 'command_witch_poison';
+		        		msgObj.requireIdInput = true;
 		          	msgObj.negativeBtn = 'btn_witch_poison_negative';
 		        	}
 		        }else{
@@ -120,6 +150,7 @@ export class GameMessage {
 	      case GameTurn.PoliceElection:
 	        if(game.policePlayer == undefined){
 	          msgObj.command = 'command_police_election';
+	        	msgObj.requireIdInput = true;
 	          msgObj.negativeBtn = 'btn_police_election_negative';
 	          msgObj.canBurst = true;
 	        }else{
@@ -159,6 +190,7 @@ export class GameMessage {
 	              msgObj.command = 'command_vote_with_police_ndead'; // include case for 0 death
 	            }
 	          }
+	          msgObj.requireIdInput = true;
 	          msgObj.negativeBtn = 'btn_vote_negative';
 	        }else {
 	          if (game.votedPlayer instanceof Player) {
@@ -178,6 +210,7 @@ export class GameMessage {
 	      		msgObj.announcement = 'command_announce_dead';
 	      		msgObj.params['ids'] = game.deadIdsThisNight;
 	          msgObj.command = 'command_hunter_shoot';
+	          msgObj.requireIdInput = true;
 	          msgObj.negativeBtn = 'btn_hunter_shoot_negative';
 	        }else{
 	          if (game.shootedPlayer instanceof Player) {
@@ -192,6 +225,7 @@ export class GameMessage {
 	      case GameTurn.Hunter_Vote_Shoot:
 	      	if (game.shootedPlayer == undefined) {
 	          msgObj.command = 'command_hunter_shoot';
+	          msgObj.requireIdInput = true;
 	          msgObj.negativeBtn = 'btn_hunter_shoot_negative';
 	        }else{
 	          if (game.shootedPlayer instanceof Player) {
@@ -206,6 +240,7 @@ export class GameMessage {
 	      case GameTurn.Burst:
 	      	if (game.burstPlayer == undefined) {
 	      		msgObj.command = 'command_burst';
+	      		msgObj.requireIdInput = true;
 	      		msgObj.negativeBtn = 'btn_burst_negative';
 	      	}else{
 	      		msgObj.announcement = 'announce_burst_done';
