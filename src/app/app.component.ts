@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { HomePage } from '../pages/home/home';
 import { ListPage } from '../pages/list/list';
-import { GamePage } from '../pages/game/game';
+import { LanguagePage } from '../pages/language/language';
 
 @Component({
   templateUrl: 'app.html'
@@ -28,7 +28,7 @@ export class MyApp {
     this.pages = [
       { title: 'page_home_title', component: HomePage },
       { title: 'page_list_title', component: ListPage },
-      // { title: '游戏', component: GamePage}
+      { title: 'page_language_title', component: LanguagePage },
     ];
 
   }

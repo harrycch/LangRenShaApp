@@ -89,6 +89,8 @@
 
   "page_list_title" : "角色列表",
 
+  "page_language_title" : "语言",
+
   "page_game_title" : "游戏进行中",
   "alert_game_start_title" : "开始新游戏",
   "alert_game_start_msg" : "如何开始游戏？",
