@@ -24,7 +24,12 @@ export class GamePage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private alertCtrl: AlertController, private translate: TranslateService) {
     let opts = {
-      randomCards : true
+      randomCards : true,
+      cardSet: [
+      CardType.Wolf,CardType.Wolf,CardType.Wolf,CardType.Wolf,
+      CardType.Fortuneteller,CardType.Witch,CardType.Hunter,CardType.Stupid,
+      CardType.Villager,CardType.Villager,CardType.Villager,CardType.Villager
+      ]
     };
 
     if (navParams.get('isContinue')!=true) {

@@ -23,10 +23,15 @@ export enum GameTime{
 
 export class Game {
   public static MIN_PLAYER_COUNT = 8;
+  public static DEFAULT_CARD_SET = [
+      CardType.Wolf,CardType.Wolf,CardType.Wolf,CardType.Wolf,
+      CardType.Fortuneteller,CardType.Witch,CardType.Hunter,CardType.Stupid,
+      CardType.Villager,CardType.Villager,CardType.Villager,CardType.Villager
+      ];
 
 	private static instance: Game;
+  public cardSet : Array<CardType> = Game.DEFAULT_CARD_SET;
 	public playerList : Array<Player> = [];
-	public playerCount : number = 12;
 	public currentRound : number;
 	private _currentTurn : GameTurn;
   public previousTurn : GameTurn;
@@ -47,23 +52,20 @@ export class Game {
   public deadIdsThisNight : number[] = []
 
   private constructor(private opts : object) {
-    if (opts.hasOwnProperty('playerCount') && typeof opts['playerCount'] == 'number' && opts['playerCount'] >= Game.MIN_PLAYER_COUNT) {
-      this.playerCount = opts['playerCount'];
+    if (opts.hasOwnProperty('cardSet') && opts['cardSet'] instanceof Array && opts['cardSet'].length >= Game.MIN_PLAYER_COUNT) {
+      this.cardSet = [];
+      for (let i = 0; i < opts['cardSet'].length; i++) {
+        this.cardSet.push(opts['cardSet'][i]);
+      }
     }
 
     this.generatePlayerList();
 
     if(opts.hasOwnProperty('randomCards') && typeof opts['randomCards'] == 'boolean' && opts['randomCards'] ){
       const shuffled = this.playerList.sort(() => .5 - Math.random());// shuffle  
-      let selected = shuffled.slice(0,8);
-      selected[0].setNewCard(new WolfCard());
-      selected[1].setNewCard(new WolfCard());
-      selected[2].setNewCard(new WolfCard());
-      selected[3].setNewCard(new WolfCard());
-      selected[4].setNewCard(new FortunetellerCard());
-      selected[5].setNewCard(new WitchCard());
-      selected[6].setNewCard(new HunterCard());
-      selected[7].setNewCard(new StupidCard());
+      for (let i = 0; i < this.playerCount; i++) {
+        shuffled[i].setNewCard(Card.createCard(this.cardSet[i]));
+      }
       this.playerList.sort((p1, p2) => p1.id-p2.id);
     }
   }
@@ -81,6 +83,10 @@ export class Game {
 
   static destroyInstance(){
     Game.instance = null;
+  }
+
+  public get playerCount() : number {
+    return this.cardSet.length;
   }
 
   public get isInitialRound() : boolean {
@@ -133,7 +139,7 @@ export class Game {
   generatePlayerList(){
   	this.playerList = [];
   	for (let id = 1; id <= this.playerCount; ++id) {
-  		this.playerList.push((new Player(id)).setNewCard(new VillagerCard()));
+  		this.playerList.push(new Player(id));
   	}
   }
 
