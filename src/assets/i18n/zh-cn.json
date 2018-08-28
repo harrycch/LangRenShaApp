@@ -90,9 +90,11 @@
   "page_list_title" : "角色列表",
 
   "page_game_title" : "游戏进行中",
-  "alert_game_start_title" : "如何開始遊戲？",
-  "alert_game_start_random" : "隨機分派身份",
+  "alert_game_start_title" : "开始新游戏",
+  "alert_game_start_msg" : "如何开始游戏？",
+  "alert_game_start_random" : "随机分派身份",
   "alert_game_start_judge" : "法官指定身份",
+  "alert_game_start_cancel" : "取消",
 
   "alert_game_quit_title" : "暂停游戏",
   "alert_game_quit_msg" : "想离开游戏吗？﹙之后可继续这局游戏﹚"

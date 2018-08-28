@@ -24,7 +24,7 @@ export class GamePage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private alertCtrl: AlertController, private translate: TranslateService) {
     let opts = {
-      randomCards : false,
+      randomCards : navParams.get('randomCards') || false,
       cardSet: [
       CardType.Wolf,CardType.Wolf,CardType.Wolf,CardType.Wolf,
       CardType.Fortuneteller,CardType.Witch,CardType.Hunter,CardType.Stupid,

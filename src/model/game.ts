@@ -400,7 +400,7 @@ export class Game {
   			if(this.potionedPlayer == undefined){
           if(this.killedPlayer instanceof Player 
             && targetId == this.killedPlayer.id
-            && (this.killedPlayer.card.type != CardType.Witch || this.currentRound == 1)
+            && (this.killedPlayer.card==undefined || this.killedPlayer.card.type != CardType.Witch || this.currentRound == 1)
             && !witchCard.isPotionUsed
             ){
             this.potionedPlayer = this.killedPlayer;
