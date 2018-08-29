@@ -1,0 +1,17 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>{{ "page_language_title" | translate }}</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <button ion-item *ngFor="let language of languages" (click)="languageTapped($event, language)">
+      <!-- <ion-icon [name]="language.icon" item-start></ion-icon> -->
+      {{language.name}}
+    </button>
+  </ion-list>
+</ion-content>

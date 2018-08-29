@@ -24,7 +24,7 @@
   <ion-row class="card-background-page">
     <ion-col col-3 *ngFor="let player of game.playerList">
       <ion-card (click)="onClickCard($event, player)">
-        <img class="card-image" src="assets/imgs/{{player.card.imgPath}}"/>
+        <img class="card-image" src="assets/imgs/{{ (player.card != undefined) ? player.card.imgPath : 'card-empty.jpg'}}"/>
         <div class="card-title">{{ player.id }}</div>
         <div class="card-subtitle">({{ (player.isAlive ? 'player_alive' : 'player_dead') | translate }})</div>
       </ion-card>

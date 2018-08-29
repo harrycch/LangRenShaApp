@@ -23,6 +23,12 @@
   "card_hunter_desc" : "当猎人被狼人杀害或被村民处决时，他可以射杀任意一个玩家。但当猎人由于意外死亡（如女巫的毒药或者被殉情而死）他不可在死前射出子弹。",
   "card_stupid_desc" : "白痴若是被投票出局，可以翻开自己的身份牌，免疫此次放逐，之后可以正常发言，但不能投票，狼人仍需要击杀他一次才能让他死亡。但若是白痴因非投票原因死亡，则无法发动技能，立即死亡。",
 
+  "command_choose_wolf": "请法官指定狼人玩家。",
+  "command_choose_fortuneteller": "请法官指定预言家玩家。",
+  "command_choose_witch": "请法官指定女巫玩家。",
+  "command_choose_hunter": "请法官指定猎人玩家。",
+  "command_choose_stupid": "请法官指定白痴玩家。",
+
   "command_go_to_night" : "天黑请闭眼",
   "command_wolf_kill" : "狼人请开眼，选择杀几号玩家？",
   "command_wolf_kill_end" : "狼人请闭眼。",
@@ -83,7 +89,14 @@
 
   "page_list_title" : "角色列表",
 
+  "page_language_title" : "语言",
+
   "page_game_title" : "游戏进行中",
+  "alert_game_start_title" : "开始新游戏",
+  "alert_game_start_msg" : "如何开始游戏？",
+  "alert_game_start_random" : "随机分派身份",
+  "alert_game_start_judge" : "法官指定身份",
+  "alert_game_start_cancel" : "取消",
 
   "alert_game_quit_title" : "暂停游戏",
   "alert_game_quit_msg" : "想离开游戏吗？﹙之后可继续这局游戏﹚"
