@@ -32,15 +32,24 @@ export class HomePage {
     this.translate.get('alert_game_start_random').subscribe(t => {a.random=t});
     this.translate.get('alert_game_start_judge').subscribe(t => {a.judge=t});
     this.translate.get('alert_game_start_cancel').subscribe(t => {a.cancel=t});
+    this.translate.get('alert_game_start_count_placeholder').subscribe(t => {a.countPlaceholder=t});
 
     let alertPopup = this.alertCtrl.create({
       title: a.title,
       message: a.msg,
+      inputs: [
+        {
+          name: 'count',
+          placeholder: a.countPlaceholder,
+          type: 'number'
+        },
+      ],
       buttons: [{
         text: a.random,
-        handler: () => {
+        handler: data => {
           alertPopup.dismiss().then(() => {
             this.navCtrl.push(GamePage, {
+              playerCount: data.count!="" ? +data.count : null,
               isContinue: false,
               randomCards: true
             }, {
@@ -53,9 +62,10 @@ export class HomePage {
       },
       {
         text: a.judge,
-        handler: () => {
+        handler: data => {
           alertPopup.dismiss().then(() => {
             this.navCtrl.push(GamePage, {
+              playerCount: data.count!="" ? +data.count : null,
               isContinue: false,
               randomCards: false
             }, {

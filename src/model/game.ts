@@ -28,16 +28,41 @@ export enum GameTime{
 
 export class Game {
   public static MIN_PLAYER_COUNT = 8;
-  public static DEFAULT_CARD_SET = [
-      CardType.Wolf,CardType.Wolf,CardType.Wolf,CardType.Wolf,
-      CardType.Fortuneteller,CardType.Witch,CardType.Hunter,CardType.Stupid,
-      CardType.Villager,CardType.Villager,CardType.Villager,CardType.Villager
-      ];
+  public static MAX_PLAYER_COUNT = 12;
+  public static DEFAULT_PLAYER_COUNT = 12;
+  public static STANDARD_CARD_SETS = {
+    "8":[
+    CardType.Wolf,CardType.Wolf,
+    CardType.Fortuneteller,CardType.Witch,CardType.Hunter,
+    CardType.Villager,CardType.Villager,CardType.Villager
+    ],
+    "9":[
+    CardType.Wolf,CardType.Wolf,CardType.Wolf,
+    CardType.Fortuneteller,CardType.Witch,CardType.Hunter,
+    CardType.Villager,CardType.Villager,CardType.Villager
+    ],
+    "10": [
+    CardType.Wolf,CardType.Wolf,CardType.Wolf,
+    CardType.Fortuneteller,CardType.Witch,CardType.Hunter,
+    CardType.Villager,CardType.Villager,CardType.Villager,CardType.Villager
+    ],
+    "11": [
+    CardType.Wolf,CardType.Wolf,CardType.Wolf,
+    CardType.Fortuneteller,CardType.Witch,CardType.Hunter,CardType.Stupid,
+    CardType.Villager,CardType.Villager,CardType.Villager,CardType.Villager
+    ],
+    "12": [
+    CardType.Wolf,CardType.Wolf,CardType.Wolf,CardType.Wolf,
+    CardType.Fortuneteller,CardType.Witch,CardType.Hunter,CardType.Stupid,
+    CardType.Villager,CardType.Villager,CardType.Villager,CardType.Villager
+    ]
+  };
 
 	private static instance: Game;
-  public cardSet : Array<CardType> = Game.DEFAULT_CARD_SET;
+  public cardSet : Array<CardType> = Game.STANDARD_CARD_SETS[""+Game.DEFAULT_PLAYER_COUNT];
 	public cardDistributed : boolean[] = [false,false,false,false,false,false,false,false,false,false,false,false];
   public playerList : Array<Player> = [];
+  public playerCount : number = Game.DEFAULT_PLAYER_COUNT;
 	
   public currentRound : number;
 	private _currentTurn : GameTurn;
@@ -59,12 +84,19 @@ export class Game {
   public deadIdsThisNight : number[] = [];
 
   private constructor(private opts : object) {
-    if (opts.hasOwnProperty('cardSet') && opts['cardSet'] instanceof Array && opts['cardSet'].length >= Game.MIN_PLAYER_COUNT) {
+    if (opts.hasOwnProperty('playerCount') && typeof opts['playerCount'] == 'number') {
+      this.playerCount = opts['playerCount'];
+    }
+
+    if (opts.hasOwnProperty('cardSet') && opts['cardSet'] instanceof Array && opts['cardSet'].length >= Game.MIN_PLAYER_COUNT && opts['cardSet'].length <= Game.MAX_PLAYER_COUNT) {
+      this.playerCount = opts['cardSet'].length;
       this.cardSet = [];
       for (let i = 0; i < opts['cardSet'].length; i++) {
         this.cardSet.push(opts['cardSet'][i]);
         this.cardDistributed.push(false);
       }
+    }else{
+      this.cardSet = Game.STANDARD_CARD_SETS[""+this.playerCount];
     }
 
     this.generatePlayerList();
@@ -92,10 +124,6 @@ export class Game {
 
   static destroyInstance(){
     Game.instance = null;
-  }
-
-  public get playerCount() : number {
-    return this.cardSet.length;
   }
 
   public get isInitialRound() : boolean {
@@ -435,6 +463,7 @@ export class Game {
         }else {
           if(this.policePlayer == undefined){
             if (this.isCardTypeAllDistributed(CardType.Stupid)) {
+              this.distributeRemainingAsVillager();
               this.currentTurn = GameTurn.PoliceElection;
             }else{
               this.currentTurn = GameTurn.StupidChoose;

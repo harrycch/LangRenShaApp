@@ -97,6 +97,7 @@
   "alert_game_start_random" : "随机分派身份",
   "alert_game_start_judge" : "法官指定身份",
   "alert_game_start_cancel" : "取消",
+  "alert_game_start_count_placeholder" : "玩家人数﹙预设︰12﹚",
 
   "alert_game_quit_title" : "暂停游戏",
   "alert_game_quit_msg" : "想离开游戏吗？﹙之后可继续这局游戏﹚"
