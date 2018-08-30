@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
+import { IonicStorageModule } from '@ionic/storage';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
@@ -26,6 +27,7 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation';
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
+    IonicStorageModule.forRoot(),
     HttpClientModule,
     TranslateModule.forRoot({
       loader: {

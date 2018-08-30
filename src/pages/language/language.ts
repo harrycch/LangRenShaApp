@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { TranslateService } from '@ngx-translate/core';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'page-language',
@@ -18,11 +19,12 @@ export class LanguagePage {
     }
   ];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams,private translate: TranslateService) {
+  constructor(public navCtrl: NavController, public navParams: NavParams,private storage: Storage,private translate: TranslateService) {
     
   }
 
   languageTapped(event, language) {
+    this.storage.set('i18n', language['code']);
     this.translate.use(language['code']);
   }
 }

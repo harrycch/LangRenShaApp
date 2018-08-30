@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { Nav, Platform } from 'ionic-angular';
+import { Storage } from '@ionic/storage';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
@@ -21,7 +22,7 @@ export class MyApp {
 
   constructor(public platform: Platform, 
     public statusBar: StatusBar, public splashScreen: SplashScreen, private screenOrientation: ScreenOrientation,
-    private translate: TranslateService) {
+    private storage: Storage, private translate: TranslateService) {
     this.initializeApp();
 
     // used for an example of ngFor and navigation
@@ -38,6 +39,11 @@ export class MyApp {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       this.translate.setDefaultLang('zh-cn');
+      this.storage.get('i18n').then((code) => {
+        if (typeof code == 'string') {
+          this.translate.use(code);
+        }
+      });
       this.statusBar.styleDefault();
       this.splashScreen.hide();
       this.screenOrientation.lock(this.screenOrientation.ORIENTATIONS.PORTRAIT);
