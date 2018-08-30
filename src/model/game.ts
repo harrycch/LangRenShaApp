@@ -84,11 +84,11 @@ export class Game {
   public deadIdsThisNight : number[] = [];
 
   private constructor(private opts : object) {
-    if (opts.hasOwnProperty('playerCount') && typeof opts['playerCount'] == 'number') {
+    if (opts.hasOwnProperty('playerCount') && typeof opts['playerCount'] == 'number' && Game.isPlayerCountValid(opts['playerCount'])) {
       this.playerCount = opts['playerCount'];
     }
 
-    if (opts.hasOwnProperty('cardSet') && opts['cardSet'] instanceof Array && opts['cardSet'].length >= Game.MIN_PLAYER_COUNT && opts['cardSet'].length <= Game.MAX_PLAYER_COUNT) {
+    if (opts.hasOwnProperty('cardSet') && opts['cardSet'] instanceof Array && Game.isPlayerCountValid(opts['cardSet'].length)) {
       this.playerCount = opts['cardSet'].length;
       this.cardSet = [];
       for (let i = 0; i < opts['cardSet'].length; i++) {
@@ -124,6 +124,10 @@ export class Game {
 
   static destroyInstance(){
     Game.instance = null;
+  }
+
+  static isPlayerCountValid(playerCount: number) : boolean{
+    return Number.isInteger(playerCount) && playerCount >= Game.MIN_PLAYER_COUNT && playerCount <= Game.MAX_PLAYER_COUNT;
   }
 
   public get isInitialRound() : boolean {
