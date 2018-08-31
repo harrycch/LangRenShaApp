@@ -220,6 +220,10 @@ export class Game {
     return this.alivePlayerList.filter(player => (player.card instanceof Card && player.card.team === team));
   }
 
+  getActionsByRound(round: number): Array<GameAction>{
+    return this.actions.filter(action => action.round==round);
+  }
+
   start(){
   	this.currentRound = 1;
     this.isStarted = true;

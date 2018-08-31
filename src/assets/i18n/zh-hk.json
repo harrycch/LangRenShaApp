@@ -104,5 +104,14 @@
   "alert_game_quit_msg" : "想離開遊戲嗎？﹙之後可繼續這局遊戲﹚",
 
   "page_game_result_title" : "遊戲記錄",
-  "btn_game_result": "遊戲記錄"
+  "btn_game_result": "遊戲記錄",
+
+  "table_game_result_th_wolf": "狼人",
+  "table_game_result_th_fortuneteller": "預言家",
+  "table_game_result_th_witch": "女巫",
+  "table_game_result_th_hunter": "獵人",
+  "table_game_result_th_stupid": "白癡",
+  "table_game_result_th_villager": "村民",
+  "table_game_result_th_vote": "投票",
+  "table_game_result_th_round": "回合"
 }

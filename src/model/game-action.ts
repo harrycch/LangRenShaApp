@@ -15,6 +15,6 @@ export enum ActionType{
 export class GameAction {
 	public isProcessed: boolean = false;
 
-	public constructor(public round: number, public actionType: ActionType, public targetPlayer: Player | boolean) {
+	public constructor(public round: number, public type: ActionType, public targetPlayer: Player | boolean) {
 	}
 }
