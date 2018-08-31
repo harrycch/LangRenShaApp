@@ -101,5 +101,8 @@
   "toast_game_start_count_error": "玩家人数必须为8-12人",
 
   "alert_game_quit_title" : "暂停游戏",
-  "alert_game_quit_msg" : "想离开游戏吗？﹙之后可继续这局游戏﹚"
+  "alert_game_quit_msg" : "想离开游戏吗？﹙之后可继续这局游戏﹚",
+
+  "page_game_result_title" : "游戏记录",
+  "btn_game_result": "游戏记录"
 }

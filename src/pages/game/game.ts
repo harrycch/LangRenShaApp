@@ -5,6 +5,7 @@ import { GameMessage } from '../../model/game-message';
 import { Player } from '../../model/player';
 import { Team, CardType, WitchCard } from '../../model/card';
 import { TranslateService } from '@ngx-translate/core';
+import { GameResultPage } from './game-result';
 
 /**
  * Generated class for the GamePage page.
@@ -47,6 +48,10 @@ export class GamePage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad GamePage');
+  }
+
+  ionViewWillEnter(){
+    this.showAlertMessage = true;
   }
 
   ionViewCanLeave() {
@@ -115,6 +120,15 @@ export class GamePage {
     if (this.gameMessage.canBurst) {
       this.game.proceedWithBurst();
       this.refreshMessages();
+    }
+  }
+
+  onClickGameResultBtn(event){
+    if (this.game.isEnded) {
+      this.showAlertMessage = false;
+      this.navCtrl.push(GameResultPage, {
+        game: this.game
+      }, {});
     }
   }
 
