@@ -2,6 +2,7 @@ import {Player} from './player';
 import {Card, CardType, Team, 
   WolfCard, FortunetellerCard, WitchCard, HunterCard, StupidCard, VillagerCard
 } from './card';
+import {GameAction, ActionType} from './game-action';
 
 export enum GameTurn { 
   WolfChoose,
@@ -71,6 +72,8 @@ export class Game {
   public isPaused : boolean = false;
   public isEnded : boolean = false;
   public allDeadTeam : Team;
+
+  public actions : GameAction[] = [];
 
   public policePlayer? : Player | boolean;
   public killedPlayer? : Player | boolean;
@@ -142,6 +145,10 @@ export class Game {
     return this.playerList.filter(player => player.isAlive === true);
   }
 
+  public get unprocessedActions() : Array<GameAction> {
+    return this.actions.filter(action => action.isProcessed === false);
+  }
+
   public get previousTime() : GameTime{
     return this.getTimeFromTurn(this.previousTurn);
   }
@@ -211,6 +218,10 @@ export class Game {
 
   getAlivePlayersByTeam(team: Team) : Array<Player>{
     return this.alivePlayerList.filter(player => (player.card instanceof Card && player.card.team === team));
+  }
+
+  getActionsByRound(round: number): Array<GameAction>{
+    return this.actions.filter(action => action.round==round);
   }
 
   start(){
@@ -388,6 +399,7 @@ export class Game {
           }else {
             this.killedPlayer = false;
           }
+          this.actions.push(new GameAction(this.currentRound, ActionType.WolfKill, this.killedPlayer));
         }else {
           if (this.isCardTypeAllDistributed(CardType.Fortuneteller)) {
             this.currentTurn = GameTurn.Fortuneteller;  
@@ -411,6 +423,7 @@ export class Game {
           }else {
             this.checkedPlayer = false;  
           }
+          this.actions.push(new GameAction(this.currentRound, ActionType.FortunetellerCheck, this.checkedPlayer));
         }else {
           if (this.isCardTypeAllDistributed(CardType.Witch)) {
             this.currentTurn = GameTurn.Witch;
@@ -439,12 +452,14 @@ export class Game {
           }else{
             this.potionedPlayer = false;
           }
+          this.actions.push(new GameAction(this.currentRound, ActionType.WitchPotion, this.potionedPlayer));
         }else if(this.poisonedPlayer == undefined) {
           if(targetId != undefined && !witchCard.isPoisonUsed && this.potionedPlayer == false){
             this.poisonedPlayer = this.getAlivePlayerById(targetId);
           }else{
             this.poisonedPlayer = false;
           }
+          this.actions.push(new GameAction(this.currentRound, ActionType.WitchPoison, this.poisonedPlayer));
         }else{
           if (this.isCardTypeAllDistributed(CardType.Hunter)) {
             this.currentTurn = GameTurn.Hunter;
@@ -504,6 +519,7 @@ export class Game {
           }else {
             this.policePlayer = false;
           }
+          this.actions.push(new GameAction(this.currentRound, ActionType.PoliceElected, this.policePlayer));
         }else {
           if (this.killedPlayer instanceof Player 
             && !(this.potionedPlayer instanceof Player && this.potionedPlayer.id == this.killedPlayer.id)
@@ -527,6 +543,7 @@ export class Game {
           }else {
             this.votedPlayer = false;
           }
+          this.actions.push(new GameAction(this.currentRound, ActionType.PlayerVoted, this.votedPlayer));
         }else {
           if (this.votedPlayer instanceof Player && this.votedPlayer.card.type == CardType.Hunter) {
             this.currentTurn = GameTurn.Hunter_Vote_Shoot;
@@ -551,6 +568,7 @@ export class Game {
           }else{
             this.shootedPlayer = false;
           }
+          this.actions.push(new GameAction(this.currentRound, ActionType.HunterShoot, this.shootedPlayer));
         }else{
           this.processAndClearTargets();
           this.checkEndGame();
@@ -567,6 +585,7 @@ export class Game {
           }else{
             this.shootedPlayer = false;
           }
+          this.actions.push(new GameAction(this.currentRound, ActionType.HunterShoot, this.shootedPlayer));
         }else{
           this.processAndClearTargets();
           this.checkEndGame();
@@ -583,6 +602,7 @@ export class Game {
         if (this.burstPlayer == undefined) {
           if (targetId != undefined) {
             this.burstPlayer = this.getAlivePlayerById(targetId);
+            this.actions.push(new GameAction(this.currentRound, ActionType.WolfBurst, this.burstPlayer));
           }else{
             this.currentTurn = this.previousTurn;
           }
@@ -642,6 +662,7 @@ export class Game {
     if(this.votedPlayer instanceof Player){
       if(this.votedPlayer.card.type == CardType.Stupid && !(this.votedPlayer.card as StupidCard).isShowedUp){
         (this.votedPlayer.card as StupidCard).isShowedUp = true;
+        this.actions.push(new GameAction(this.currentRound, ActionType.StupidShow, this.votedPlayer));
       }else{
         this.votedPlayer.isAlive = false;
       }
@@ -665,6 +686,10 @@ export class Game {
     this.shootedPlayer = undefined;
     this.burstPlayer = undefined;
     this.isHunterNotified = false;
+
+    for (let i = 0; i < this.unprocessedActions.length; i++) {
+      this.unprocessedActions[i].isProcessed = true;
+    }
   }
 
   checkEndGame(){

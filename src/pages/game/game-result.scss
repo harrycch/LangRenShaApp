@@ -1,0 +1,25 @@
+page-game-result {
+	.table{
+		ion-row {
+			&.header {
+				background-color:#f4f4f4;
+			}
+
+			ion-col{
+				border: solid 1px grey;
+			  border-bottom-style: none;
+			  border-right-style: none;
+
+			  &:last-child {
+			  	border-right: solid 1px grey;
+			  }
+			}
+
+			&:last-child{
+				ion-col {
+					border-bottom: solid 1px grey;
+				}
+			}
+		}
+	}
+}

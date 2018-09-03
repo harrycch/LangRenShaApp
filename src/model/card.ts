@@ -6,6 +6,7 @@ export abstract class Card {
 	public team : Team;
 	public type : CardType;
 	public imgPath : string;
+	public colorName: string;
 
 	static allTypes() : Array<CardType>{
 		const keys = Object.keys(CardType).filter(k => typeof CardType[k as any] === "number"); // ["A", "B"]
@@ -41,6 +42,7 @@ export class WolfCard extends Card{
 		this.team = Team.Wolf;
 		this.imgPath = 'card-wolf.jpg';
 		this.name = 'card_wolf';
+		this.colorName = 'wolf';
 	}
 }
 
@@ -51,6 +53,7 @@ export class FortunetellerCard extends Card{
 		this.team = Team.God;
 		this.imgPath = 'card-fortuneteller.jpg';
 		this.name = 'card_fortuneteller';
+		this.colorName = 'fortuneteller';
 	}
 }
 
@@ -64,6 +67,7 @@ export class WitchCard extends Card{
 		this.team = Team.God;
 		this.imgPath = 'card-witch.jpg';
 		this.name = 'card_witch';
+		this.colorName = 'witch';
 	}
 }
 
@@ -74,6 +78,7 @@ export class HunterCard extends Card{
 		this.team = Team.God;
 		this.imgPath = 'card-hunter.jpg';
 		this.name = 'card_hunter';
+		this.colorName = 'hunter';
 	}
 }
 
@@ -85,6 +90,7 @@ export class StupidCard extends Card{
 		this.team = Team.God;
 		this.imgPath = 'card-stupid.jpg';
 		this.name = 'card_stupid';
+		this.colorName = 'stupid';
 	}
 }
 
@@ -95,5 +101,6 @@ export class VillagerCard extends Card{
 		this.team = Team.Villager;
 		this.imgPath = 'card-villager.jpg';
 		this.name = 'card_villager';
+		this.colorName = 'villager';
 	}
 }

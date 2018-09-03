@@ -1,0 +1,88 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>{{ "page_game_result_title" | translate }}</ion-title>
+    <ion-buttons right>
+      <button ion-button icon-only (click)="onClickShareBtn($event)">
+        <ion-icon name="share"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <p>{{ 'table_game_result_th_wolf' | translate}}: <ion-badge color="wolf" *ngFor="let id of result.wolf.ids">{{ id }}</ion-badge></p>
+  <p>{{ 'table_game_result_th_fortuneteller' | translate}}: <ion-badge color="fortuneteller" *ngFor="let id of result.fortuneteller.ids">{{ id }}</ion-badge></p>
+  <p>{{ 'table_game_result_th_witch' | translate}}: <ion-badge color="witch" *ngFor="let id of result.witch.ids">{{ id }}</ion-badge></p>
+  <p>{{ 'table_game_result_th_hunter' | translate}}: <ion-badge color="hunter" *ngFor="let id of result.hunter.ids">{{ id }}</ion-badge></p>
+  <p>{{ 'table_game_result_th_stupid' | translate}}: <ion-badge color="stupid" *ngFor="let id of result.stupid.ids">{{ id }}</ion-badge></p>
+  <p>{{ 'table_game_result_th_villager' | translate}}: <ion-badge color="villager" *ngFor="let id of result.villager.ids">{{ id }}</ion-badge></p>
+
+  <ion-grid class="table">
+    <ion-row class="header">
+      <ion-col>{{ 'table_game_result_th_round' | translate}}</ion-col>
+      <ion-col>{{ 'table_game_result_th_wolf' | translate}}</ion-col>
+      <ion-col>{{ 'table_game_result_th_fortuneteller' | translate}}</ion-col>
+      <ion-col>{{ 'table_game_result_th_witch' | translate}}</ion-col>
+      <ion-col>{{ 'table_game_result_th_hunter' | translate}}</ion-col>
+      <ion-col>{{ 'table_game_result_th_stupid' | translate}}</ion-col>
+      <ion-col>{{ 'table_game_result_th_vote' | translate}}</ion-col>
+    </ion-row>
+    <!-- <ion-row>
+      <ion-col></ion-col>
+      <ion-col></ion-col>
+      <ion-col><ion-badge *ngFor="let id of result.fortuneteller.ids">{{ id }}</ion-badge></ion-col>
+      <ion-col><ion-badge *ngFor="let id of result.witch.ids">{{ id }}</ion-badge></ion-col>
+      <ion-col><ion-badge *ngFor="let id of result.hunter.ids">{{ id }}</ion-badge></ion-col>
+      <ion-col><ion-badge *ngFor="let id of result.stupid.ids">{{ id }}</ion-badge></ion-col>
+      <ion-col></ion-col>
+    </ion-row> -->
+    <ion-row *ngFor="let round of result.rounds">
+      <ion-col>{{ round.number }}</ion-col>
+      <ion-col>
+        <p *ngIf="!!round.wolf">
+          <ion-icon name="paw"></ion-icon>
+          <ion-badge color="{{round.wolfColor}}">{{ round.wolf }}</ion-badge>
+        </p>
+      </ion-col>
+      <ion-col>
+        <p *ngIf="!!round.fortuneteller">
+          <ion-icon name="search"></ion-icon>
+          <ion-badge color="{{round.fortunetellerColor}}">{{ round.fortuneteller }}</ion-badge>
+        </p>
+      </ion-col>
+      <ion-col>
+        <p *ngIf="!!round.witch && round.witchUse=='potion'">
+          <ion-icon name="ios-flask-outline"></ion-icon>
+          <ion-badge color="{{round.witchColor}}">{{ round.witch }}</ion-badge>
+        </p>
+        <p *ngIf="!!round.witch && round.witchUse=='poison'">
+          <ion-icon name="ios-flask"></ion-icon>
+          <ion-badge color="{{round.witchColor}}">{{ round.witch }}</ion-badge>
+        </p>
+      </ion-col>
+      <ion-col>
+        <p *ngIf="!!round.hunter">
+          <ion-icon name="ios-locate-outline"></ion-icon>
+          <ion-badge color="{{round.hunterColor}}">{{ round.hunter }}</ion-badge>
+        </p>
+      </ion-col>
+      <ion-col>
+        <p *ngIf="!!round.stupid">
+          <ion-icon name="happy"></ion-icon>
+          <ion-badge color="{{round.stupidColor}}">{{ round.stupid }}</ion-badge>
+        </p>
+      </ion-col>
+      <ion-col>
+        <p *ngIf="!!round.vote">
+          <ion-icon name="people"></ion-icon>
+          <ion-badge color="{{round.voteColor}}">{{ round.vote }}</ion-badge>
+        </p>
+        <p *ngIf="!!round.burst">
+          <ion-icon name="hand"></ion-icon>
+          <ion-badge color="{{round.burstColor}}">{{ round.burst }}</ion-badge>
+        </p>
+      </ion-col>
+    </ion-row>
+
+  </ion-grid>
+</ion-content>

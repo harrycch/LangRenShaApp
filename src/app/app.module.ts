@@ -10,6 +10,7 @@ import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { ListPage } from '../pages/list/list';
 import { GamePage } from '../pages/game/game';
+import { GameResultPage } from '../pages/game/game-result';
 import { LanguagePage } from '../pages/language/language';
 
 import { StatusBar } from '@ionic-native/status-bar';
@@ -22,7 +23,8 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation';
     HomePage,
     ListPage,
     GamePage,
-    LanguagePage
+    LanguagePage,
+    GameResultPage
   ],
   imports: [
     BrowserModule,
@@ -43,6 +45,7 @@ import { ScreenOrientation } from '@ionic-native/screen-orientation';
     HomePage,
     ListPage,
     GamePage,
+    GameResultPage,
     LanguagePage
   ],
   providers: [
